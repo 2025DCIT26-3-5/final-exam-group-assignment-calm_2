@@ -1,2 +1,0 @@
-const API_URL = "http://192.168.18.3:3000/";
-export default API_URL;

@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "isolatedModules": true,
+    "moduleResolution": "bundler",
+    "esModuleInterop": true
+  },
+  "extends": "expo/tsconfig.base"
+}

@@ -1,48 +1,26 @@
-import { useState } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import LoginScreen from "./screens/LoginScreen";
 import { StatusBar } from "expo-status-bar";
 
+export type RootStackParamList = {
+  Login: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
 export default function App() {
-  // State Hook
-  const [count, setCount] = useState(0);
-  const [name, setName] = useState("World");
-
   return (
-    <View style={styles.container}>
-      {/* Native Feature: Controls phone's status bar */}
-      <StatusBar style="light" backgroundColor="red" />
-
-      {/* State Display */}
-      <Text style={styles.counter}>Count: {count}</Text>
-
-      {/* Native Button */}
-      <Button title="Increment" onPress={() => setCount(count + 1)} />
-
-      <Button
-        title="Change Name"
-        onPress={() => setName(name === "World" ? "Student" : "World")}
-      />
-    </View>
+    <NavigationContainer>
+      <StatusBar style="light" />
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-// StyleSheet (like CSS but for React Native)
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#84cff1",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  Nav: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-    padding: 20,
-    marginBottom: 10,
-  },
-  counter: {
-    fontSize: 16,
-    color: "white",
-    marginVertical: 20,
-  },
-});

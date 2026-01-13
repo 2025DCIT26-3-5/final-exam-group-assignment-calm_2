@@ -1,3 +1,2 @@
-const API_URL =
-  "https://redesigned-halibut-97xr4p7q7w9q3p954-3000.app.github.dev/";
+const API_URL = "http://192.168.18.3:3000/";
 export default API_URL;

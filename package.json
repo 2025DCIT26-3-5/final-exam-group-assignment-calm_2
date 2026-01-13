@@ -1,6 +1,7 @@
 {
   "name": "hello-pilipinas",
   "version": "1.0.0",
+  "type": "module",
   "main": "./types/index.ts",
   "scripts": {
     "start": "expo start",

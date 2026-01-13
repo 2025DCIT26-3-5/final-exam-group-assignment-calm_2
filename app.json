@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Lecture-Note",
-    "slug": "Lecture-Note",
+    "name": "Lecture",
+    "slug": "Lecture",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

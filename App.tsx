@@ -12,11 +12,6 @@ export default function App() {
       {/* Native Feature: Controls phone's status bar */}
       <StatusBar style="light" backgroundColor="red" />
 
-      <Text style={styles.title}>React Native Demo</Text>
-
-      {/* Component with Props */}
-      <Greeting name={name} />
-
       {/* State Display */}
       <Text style={styles.counter}>Count: {count}</Text>
 
@@ -30,7 +25,6 @@ export default function App() {
     </View>
   );
 }
->>>>>>> 8cbe8f5 (Initial & First Changes)
 
 // StyleSheet (like CSS but for React Native)
 const styles = StyleSheet.create({

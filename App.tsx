@@ -1,21 +1,32 @@
-import { Platform, StyleSheet } from "react-native";
+import { useState } from "react";
+import { StyleSheet, Text, View, Button } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
-<<<<<<< HEAD
-// Lazy-load platform-specific entry to avoid importing mobile-only libraries on web
-export default Platform.OS === "web"
-  ? require("./WebApp").default
-  : require("./MobileApp").default;
-=======
 export default function App() {
+  // State Hook
+  const [count, setCount] = useState(0);
   const [name, setName] = useState("World");
 
   return (
     <View style={styles.container}>
+      {/* Native Feature: Controls phone's status bar */}
       <StatusBar style="light" backgroundColor="red" />
 
-      <View id="Nav" style={styles.Nav}>
-        Navigation Bar
-      </View>
+      <Text style={styles.title}>React Native Demo</Text>
+
+      {/* Component with Props */}
+      <Greeting name={name} />
+
+      {/* State Display */}
+      <Text style={styles.counter}>Count: {count}</Text>
+
+      {/* Native Button */}
+      <Button title="Increment" onPress={() => setCount(count + 1)} />
+
+      <Button
+        title="Change Name"
+        onPress={() => setName(name === "World" ? "Student" : "World")}
+      />
     </View>
   );
 }
@@ -26,20 +37,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#84cff1",
-<<<<<<< HEAD
-    alignItems: "stretch",
-    justifyContent: "flex-start",
-  },
-  Nav: {
-=======
     alignItems: "center",
     justifyContent: "center",
   },
   Nav: {
     flex: 1,
->>>>>>> 8cbe8f5 (Initial & First Changes)
     backgroundColor: "#ffffff",
     padding: 20,
     marginBottom: 10,
+  },
+  counter: {
+    fontSize: 16,
+    color: "white",
+    marginVertical: 20,
   },
 });

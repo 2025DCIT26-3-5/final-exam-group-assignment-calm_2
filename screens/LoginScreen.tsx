@@ -7,14 +7,18 @@ import {
   StyleSheet,
 } from "react-native";
 
-export default function LoginScreen() {
+type Props = {
+  onLogin: () => void;
+  onRegister: () => void;
+};
+
+export default function LoginScreen({ onLogin, onRegister }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
-
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -22,7 +26,6 @@ export default function LoginScreen() {
         onChangeText={setEmail}
         autoCapitalize="none"
       />
-
       <TextInput
         style={styles.input}
         placeholder="Password"
@@ -30,9 +33,11 @@ export default function LoginScreen() {
         onChangeText={setPassword}
         secureTextEntry
       />
-
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={onLogin}>
         <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.link} onPress={onRegister}>
+        <Text style={styles.linkText}>Register</Text>
       </TouchableOpacity>
     </View>
   );
@@ -62,10 +67,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#007BFF",
     padding: 15,
     borderRadius: 8,
+    marginBottom: 10,
   },
-  buttonText: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
+  buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
+  link: { alignSelf: "center", marginTop: 10 },
+  linkText: { color: "white", textDecorationLine: "underline" },
 });

@@ -1,14 +1,7 @@
-export type Note = {
-  id: number;
+export interface Note {
+  _id?: string;
   title: string;
+  professor: string;
   content: string;
-  course: string;
-  avgRating?: number | null;
-  ratings?: number[] | null;
-};
-
-export type RootStackParamList = {
-  NotesScreen: { course: string };
-  NoteDetail: { note: Note };
-  AddNote: { course: string };
-};
+  rating: number;
+}

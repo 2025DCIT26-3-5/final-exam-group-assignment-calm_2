@@ -1,26 +1,85 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import LoginScreen from "./screens/LoginScreen";
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
+import { View, StyleSheet } from "react-native";
+import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+import NotesListScreen from "./screens/NotesListScreen";
+import UploadNoteScreen from "./screens/UploadNoteScreen";
+import NoteDetailScreen from "./screens/NoteDetailScreen";
 
-export type RootStackParamList = {
-  Login: undefined;
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
-
+// Simple screen switching logic without navigation
 export default function App() {
+  const [currentScreen, setCurrentScreen] = useState<{
+    name: string;
+    params?: any;
+  }>({ name: "Login" });
+
+  const [notes, setNotes] = useState<
+    {
+      id: number;
+      title: string;
+      content: string;
+      rating: number;
+    }[]
+  >([]);
+
+  const openScreen = (name: string, params?: any) => {
+    setCurrentScreen({ name, params });
+  };
+
+  const updateNotes = (newNotes: typeof notes) => {
+    setNotes(newNotes);
+  };
+
+  const renderScreen = () => {
+    switch (currentScreen.name) {
+      case "Login":
+        return (
+          <LoginScreen
+            onLogin={() => openScreen("NotesList")}
+            onRegister={() => openScreen("Register")}
+          />
+        );
+      case "Register":
+        return <RegisterScreen onBack={() => openScreen("Login")} />;
+      case "NotesList":
+        return (
+          <NotesListScreen
+            notes={notes}
+            onUpload={() => openScreen("UploadNote")}
+            onOpenNote={(note: any) => openScreen("NoteDetail", { note })}
+          />
+        );
+      case "UploadNote":
+        return (
+          <UploadNoteScreen
+            notes={notes}
+            onSave={updateNotes}
+            onBack={() => openScreen("NotesList")}
+          />
+        );
+      case "NoteDetail":
+        return (
+          <NoteDetailScreen
+            note={currentScreen.params.note}
+            onBack={() => openScreen("NotesList")}
+            onRate={updateNotes}
+            notes={notes}
+          />
+        );
+      default:
+        return <LoginScreen onLogin={() => openScreen("NotesList")} />;
+    }
+  };
+
   return (
-    <NavigationContainer>
+    <View style={styles.container}>
       <StatusBar style="light" />
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+      {renderScreen()}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+});

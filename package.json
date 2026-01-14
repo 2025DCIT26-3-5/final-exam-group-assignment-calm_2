@@ -9,8 +9,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "clear": "expo start --clear",
-    "backend": "node server/server.ts"
+    "clear": "expo start --clear"
   },
   "dependencies": {
     "@react-navigation/native": "^7.1.27",

@@ -7,9 +7,11 @@ import {
   StyleSheet,
 } from "react-native";
 
+type Note = { id: number; title: string; content: string; rating: number };
+
 type Props = {
-  notes: any[];
-  onSave: () => void;
+  notes: Note[];
+  onSave: (notes: Note[]) => void;
   onBack: () => void;
 };
 
@@ -17,19 +19,11 @@ export default function UploadNoteScreen({ notes, onSave, onBack }: Props) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const saveNote = async () => {
+  const saveNote = () => {
     if (!title || !content) return;
-    try {
-      await fetch("http://localhost:3000/notes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, content }),
-      });
-      onSave();
-      onBack();
-    } catch (err) {
-      console.error("Failed to save note:", err);
-    }
+    const newNote = { id: Date.now(), title, content, rating: 0 };
+    onSave([...notes, newNote]);
+    onBack();
   };
 
   return (

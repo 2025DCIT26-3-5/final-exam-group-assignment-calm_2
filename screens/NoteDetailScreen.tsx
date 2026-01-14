@@ -1,30 +1,33 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
+type Note = { id: number; title: string; content: string; rating: number };
+
 type Props = {
-  note: any;
+  note: Note;
   onBack: () => void;
-  notes: any[];
-  onRate: () => void;
+  onRate: (notes: Note[]) => void;
+  notes: Note[];
 };
 
 export default function NoteDetailScreen({
   note,
   onBack,
-  notes,
   onRate,
+  notes,
 }: Props) {
-  const rate = async (delta: number) => {
-    try {
-      await fetch(`http://localhost:3000/notes/${note.id}/rate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ delta }),
-      });
-      onRate();
-    } catch (err) {
-      console.error("Failed to rate note:", err);
-    }
+  const upvote = () => {
+    const updatedNotes = notes.map((n) =>
+      n.id === note.id ? { ...n, rating: n.rating + 1 } : n
+    );
+    onRate(updatedNotes);
+  };
+
+  const downvote = () => {
+    const updatedNotes = notes.map((n) =>
+      n.id === note.id ? { ...n, rating: n.rating - 1 } : n
+    );
+    onRate(updatedNotes);
   };
 
   return (
@@ -33,10 +36,10 @@ export default function NoteDetailScreen({
       <Text style={styles.content}>{note.content}</Text>
       <Text style={styles.rating}>Rating: {note.rating}</Text>
       <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.button} onPress={() => rate(1)}>
+        <TouchableOpacity style={styles.button} onPress={upvote}>
           <Text style={styles.buttonText}>Upvote</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => rate(-1)}>
+        <TouchableOpacity style={styles.button} onPress={downvote}>
           <Text style={styles.buttonText}>Downvote</Text>
         </TouchableOpacity>
       </View>

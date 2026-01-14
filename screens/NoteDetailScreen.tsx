@@ -8,6 +8,7 @@ type Props = {
   onBack: () => void;
   onRate: (notes: Note[]) => void;
   notes: Note[];
+  onLogout?: () => void; // optional logout prop
 };
 
 export default function NoteDetailScreen({
@@ -15,6 +16,7 @@ export default function NoteDetailScreen({
   onBack,
   onRate,
   notes,
+  onLogout,
 }: Props) {
   const upvote = () => {
     const updatedNotes = notes.map((n) =>
@@ -35,6 +37,7 @@ export default function NoteDetailScreen({
       <Text style={styles.title}>{note.title}</Text>
       <Text style={styles.content}>{note.content}</Text>
       <Text style={styles.rating}>Rating: {note.rating}</Text>
+
       <View style={styles.buttonRow}>
         <TouchableOpacity style={styles.button} onPress={upvote}>
           <Text style={styles.buttonText}>Upvote</Text>
@@ -43,9 +46,17 @@ export default function NoteDetailScreen({
           <Text style={styles.buttonText}>Downvote</Text>
         </TouchableOpacity>
       </View>
+
       <TouchableOpacity style={styles.backButton} onPress={onBack}>
         <Text style={styles.buttonText}>Back</Text>
       </TouchableOpacity>
+
+      {/* Optional Logout Button */}
+      {onLogout && (
+        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+          <Text style={styles.buttonText}>Logout</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -68,5 +79,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   backButton: { backgroundColor: "#007BFF", padding: 15, borderRadius: 8 },
+  logoutButton: {
+    backgroundColor: "#dc3545",
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 10,
+  },
   buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
 });

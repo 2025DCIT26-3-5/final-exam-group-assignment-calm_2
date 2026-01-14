@@ -15,12 +15,7 @@ export default function App() {
   }>({ name: "Login" });
 
   const [notes, setNotes] = useState<
-    {
-      id: number;
-      title: string;
-      content: string;
-      rating: number;
-    }[]
+    { id: number; title: string; content: string; rating: number }[]
   >([]);
 
   const openScreen = (name: string, params?: any) => {
@@ -29,6 +24,10 @@ export default function App() {
 
   const updateNotes = (newNotes: typeof notes) => {
     setNotes(newNotes);
+  };
+
+  const logout = () => {
+    openScreen("Login");
   };
 
   const renderScreen = () => {
@@ -48,6 +47,7 @@ export default function App() {
             notes={notes}
             onUpload={() => openScreen("UploadNote")}
             onOpenNote={(note: any) => openScreen("NoteDetail", { note })}
+            onLogout={logout}
           />
         );
       case "UploadNote":
@@ -65,6 +65,7 @@ export default function App() {
             onBack={() => openScreen("NotesList")}
             onRate={updateNotes}
             notes={notes}
+            onLogout={logout}
           />
         );
       default:

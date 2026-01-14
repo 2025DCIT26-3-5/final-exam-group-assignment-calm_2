@@ -13,14 +13,15 @@ type Props = {
   notes: Note[];
   onUpload: () => void;
   onOpenNote: (note: Note) => void;
+  onLogout: () => void;
 };
 
 export default function NotesListScreen({
   notes,
   onUpload,
   onOpenNote,
+  onLogout,
 }: Props) {
-  // sort by rating descending
   const sortedNotes = [...notes].sort((a, b) => b.rating - a.rating);
 
   return (
@@ -41,6 +42,11 @@ export default function NotesListScreen({
       />
       <TouchableOpacity style={styles.button} onPress={onUpload}>
         <Text style={styles.buttonText}>Upload Note</Text>
+      </TouchableOpacity>
+
+      {/* Logout button */}
+      <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+        <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
     </View>
   );
@@ -63,6 +69,12 @@ const styles = StyleSheet.create({
   noteTitle: { fontWeight: "bold", marginBottom: 5 },
   button: {
     backgroundColor: "#007BFF",
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  logoutButton: {
+    backgroundColor: "#dc3545",
     padding: 15,
     borderRadius: 8,
     marginTop: 10,

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  Image,
 } from "react-native";
 
 type Props = {
@@ -13,14 +14,22 @@ type Props = {
   onRegister: () => void;
 };
 
-const LoginScreen = ({ onLogin, onRegister }: Props) => {
+export default function LoginScreen({ onLogin, onRegister }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Logo */}
+      <Image
+        source={require("../assets/Logo_Name.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+
       <Text style={styles.title}>Login</Text>
 
+      {/* Input Card */}
       <View style={styles.inputCard}>
         <View style={styles.inputGroup}>
           <Text style={styles.inputLabel}>Email</Text>
@@ -32,6 +41,7 @@ const LoginScreen = ({ onLogin, onRegister }: Props) => {
             autoCapitalize="none"
           />
         </View>
+
         <View style={styles.inputGroup}>
           <Text style={styles.inputLabel}>Password</Text>
           <TextInput
@@ -44,36 +54,46 @@ const LoginScreen = ({ onLogin, onRegister }: Props) => {
         </View>
       </View>
 
+      {/* Login Button */}
       <TouchableOpacity style={styles.loginButton} onPress={onLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.registerLink} onPress={onRegister}>
-        <Text style={styles.registerText}>Register</Text>
+
+      {/* Register Button */}
+      <TouchableOpacity style={styles.registerButton} onPress={onRegister}>
+        <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
-};
-
-export default LoginScreen;
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F0E68C", // khaki background
+    backgroundColor: "#F0E68C",
     justifyContent: "center",
+    alignItems: "center",
     padding: 20,
+  },
+  logo: {
+    width: 450,
+    height: 450,
+    maxWidth: 500,
+    maxHeight: 500,
+    marginBottom: 20,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 30,
-    color: "#333",
+    color: "white",
   },
   inputCard: {
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 20,
+    width: "100%",
     marginBottom: 20,
     borderWidth: 1,
     borderColor: "#ccc",
@@ -97,12 +117,21 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
   },
   loginButton: {
-    backgroundColor: "#28a745", // green to match Save buttons
+    backgroundColor: "#28a745", // green
     padding: 15,
     borderRadius: 8,
+    width: "100%",
     marginBottom: 10,
   },
-  buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
-  registerLink: { alignSelf: "center", marginTop: 10 },
-  registerText: { color: "#007BFF", textDecorationLine: "underline" },
+  registerButton: {
+    backgroundColor: "#007BFF", // blue
+    padding: 15,
+    borderRadius: 8,
+    width: "100%",
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
 });

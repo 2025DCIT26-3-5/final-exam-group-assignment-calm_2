@@ -28,7 +28,7 @@ export default function RegisterScreen({ onBack, onRegister }: Props) {
     <SafeAreaView style={styles.container}>
       {/* Logo */}
       <Image
-        source={require("../assets/LogoName.png")}
+        source={require("../assets/Logo_Name.png")}
         style={styles.logo}
         resizeMode="contain"
       />
@@ -82,8 +82,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 450,
+    height: 450,
+    maxHeight: 500,
+    maxWidth: 500,
     marginBottom: 20,
   },
   title: {

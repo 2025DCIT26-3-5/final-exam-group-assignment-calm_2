@@ -4,11 +4,11 @@
     "slug": "UniNotes",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/LogoOnly.png",
+    "icon": "./assets/Logo_Only.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/LogoOnly.png",
+      "image": "./assets/Logo_Only.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,14 +17,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/LogoOnly.png",
+        "foregroundImage": "./assets/Logo_Only.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "LogoOnly": "./assets/LogoOnly.png",
+      "LogoOnly": "./assets/Logo_Only.png",
       "backgroundColor": "#ffffff"
     }
   }

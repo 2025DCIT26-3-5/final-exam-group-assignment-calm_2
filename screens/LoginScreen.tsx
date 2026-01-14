@@ -27,7 +27,7 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
         resizeMode="contain"
       />
 
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Welcome to UniNotes! Login Now</Text>
 
       {/* Input Card */}
       <View style={styles.inputCard}>
@@ -61,7 +61,7 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
 
       {/* Register Button */}
       <TouchableOpacity style={styles.registerButton} onPress={onRegister}>
-        <Text style={styles.buttonText}>Register</Text>
+        <Text style={styles.buttonText}>Don't have an account? Register here!</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

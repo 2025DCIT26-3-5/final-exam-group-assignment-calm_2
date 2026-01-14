@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F0E68C", // khaki
     padding: 20,
+    alignItems: "center",
   },
   avatarContainer: {
     position: "absolute",
@@ -143,6 +144,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
     elevation: 3,
+    width: "90%",
   },
   inputGroup: {
     marginBottom: 10,
@@ -166,11 +168,13 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,
+    width: "90%",
   },
   backButton: {
     backgroundColor: "#007BFF",
     padding: 15,
     borderRadius: 8,
+    width: "90%",
   },
   buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
 });

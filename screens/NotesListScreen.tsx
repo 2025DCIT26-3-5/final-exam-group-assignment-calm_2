@@ -74,8 +74,8 @@ export default function NotesListScreen({
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
+  container: {
+    flex: 1,
     backgroundColor: "#F0E68C", // khaki color
   },
 
@@ -88,8 +88,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#b3882e",
     borderBottomWidth: 1,
     borderBottomColor: "#000000",
+    width: "100%",
   },
-  headerTitle: { fontSize: 24, fontWeight: "bold", color: "#333" },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+  },
 
   avatar: { width: 40, height: 40, borderRadius: 20 },
 
@@ -123,6 +128,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
     elevation: 3,
+    width: "90%",
   },
   noteTitle: { fontSize: 18, fontWeight: "600", marginBottom: 5 },
   noteRating: { fontSize: 14, color: "#000000" },
@@ -146,4 +152,3 @@ const styles = StyleSheet.create({
   },
   fabText: { fontSize: 30, color: "#fff", fontWeight: "bold" },
 });
-

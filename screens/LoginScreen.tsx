@@ -12,6 +12,7 @@ type Props = {
   onRegister: () => void;
 };
 
+const LoginScreen = ({ onLogin, onRegister }: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -40,7 +41,9 @@ type Props = {
       </TouchableOpacity>
     </View>
   );
-}
+};
+
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {

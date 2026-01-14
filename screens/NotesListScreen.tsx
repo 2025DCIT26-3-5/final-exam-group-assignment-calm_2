@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   SafeAreaView,
+  TextInput,
 } from "react-native";
 
 type Note = { id: number; title: string; content: string; rating: number };
@@ -25,13 +26,20 @@ export default function NotesListScreen({
   onLogout,
 }: Props) {
   const [showLogout, setShowLogout] = useState(false);
-  const sortedNotes = [...notes].sort((a, b) => b.rating - a.rating);
+  const [search, setSearch] = useState("");
+
+  const filteredNotes = [...notes]
+    .filter((note) =>
+      note.title.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => b.rating - a.rating);
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Lecture Notes</Text>
+        <Text style={styles.headerTitle}>UniNotes</Text>
+
         <TouchableOpacity onPress={() => setShowLogout(!showLogout)}>
           <Image
             source={{
@@ -42,25 +50,58 @@ export default function NotesListScreen({
         </TouchableOpacity>
       </View>
 
-      {/* Conditional Logout */}
+      {/* Logout */}
       {showLogout && (
         <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       )}
 
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search notes..."
+          value={search}
+          onChangeText={setSearch}
+          placeholderTextColor="#888"
+        />
+      </View>
+
       {/* Notes List */}
       <FlatList
-        data={sortedNotes}
+        data={filteredNotes}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.noteCard}
             onPress={() => onOpenNote(item)}
           >
-            <Text style={styles.noteTitle}>{item.title}</Text>
-            <Text style={styles.noteRating}>⭐ {item.rating}</Text>
+            {/* Title */}
+            <Text
+              style={styles.noteTitle}
+              numberOfLines={2} 
+              ellipsizeMode="tail"
+            >
+              {item.title}
+            </Text>
+
+            {/* Content */}
+            <Text
+              style={styles.noteContent}
+              numberOfLines={3} 
+              ellipsizeMode="tail"
+            >
+              {item.content}
+            </Text>
+
+            {/* Rating badge */}
+            <View style={styles.cardFooter}>
+              <View style={styles.ratingBadge}>
+                <Text style={styles.ratingText}>⭐ {item.rating}</Text>
+              </View>
+            </View>
           </TouchableOpacity>
         )}
       />
@@ -76,79 +117,137 @@ export default function NotesListScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F0E68C", // khaki color
+    backgroundColor: "#EAF4FF",
+    alignItems: "center",
   },
 
-  // Header
+  /* Header */
   header: {
+    width: "100%",
+    maxWidth: 420,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    backgroundColor: "#b3882e",
-    borderBottomWidth: 1,
-    borderBottomColor: "#000000",
-    width: "100%",
+    alignItems: "flex-start",
+    paddingVertical: 20,
+    paddingHorizontal: 10,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
+    color: "#1A1A1A",
+    marginTop: 6,
   },
 
-  avatar: { width: 40, height: 40, borderRadius: 20 },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
 
-  // Logout
+  
   logoutButton: {
-    position: "absolute",
-    top: 70,
-    right: 20,
-    backgroundColor: "#dc3545",
+    backgroundColor: "#E74C3C",
     paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    position: "absolute",
+    top: 75,
+    right: 20,
     zIndex: 10,
+  },
+  logoutText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
+  
+  searchContainer: {
+    width: "90%",
+    maxWidth: 420,
+    marginBottom: 10,
+  },
+  searchInput: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: "#D6E6F5",
+  },
+
+  
+  listContent: {
+    paddingBottom: 120,
+    alignItems: "center",
+  },
+
+
+  noteCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 16,
+    width: "90%",
+    maxWidth: 420,
+    height: 140, 
+    marginVertical: 10,
+    justifyContent: "space-between",
     shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 10,
     elevation: 5,
   },
-  logoutText: { color: "#fff", fontWeight: "bold" },
 
-  // Note Cards
-  noteCard: {
-    backgroundColor: "#caa94d",
-    marginHorizontal: 20,
-    marginVertical: 8,
-    padding: 20,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 3,
-    width: "90%",
+  noteTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#1A1A1A",
   },
-  noteTitle: { fontSize: 18, fontWeight: "600", marginBottom: 5 },
-  noteRating: { fontSize: 14, color: "#000000" },
 
-  // Floating Action Button
+  noteContent: {
+    fontSize: 14,
+    color: "#555",
+    marginTop: 4,
+  },
+
+  cardFooter: {
+    alignItems: "flex-end",
+  },
+
+  ratingBadge: {
+    backgroundColor: "#2D9CDB",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,
+    minWidth: 44,
+    alignItems: "center",
+  },
+  ratingText: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: "700",
+  },
+
+  
   fab: {
     position: "absolute",
     bottom: 30,
     right: 30,
-    backgroundColor: "#007BFF",
+    backgroundColor: "#2D9CDB",
     width: 60,
     height: 60,
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 5,
-    elevation: 6,
+    shadowColor: "#2D9CDB",
+    shadowOpacity: 0.35,
+    shadowOffset: { width: 0, height: 6 },
+    shadowRadius: 10,
+    elevation: 8,
   },
-  fabText: { fontSize: 30, color: "#fff", fontWeight: "bold" },
+  fabText: {
+    fontSize: 30,
+    color: "#fff",
+    fontWeight: "bold",
+  },
 });

@@ -1,7 +1,11 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import React, { useState } from 'react';
+import { View, TextInput, Button } from 'react-native';
+import { createNote } from '../services/api';
 
-type Note = { id: number; title: string; content: string; rating: number };
+export default function AddNoteScreen({ navigation }: any) {
+  const [title, setTitle] = useState('');
+  const [professor, setProfessor] = useState('');
+  const [content, setContent] = useState('');
 
 type Props = {
   note: Note;

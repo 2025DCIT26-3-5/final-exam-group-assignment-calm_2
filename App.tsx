@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { View, StyleSheet } from "react-native";
-import LoginScreen from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import NotesListScreen from "./screens/NotesListScreen";
-import UploadNoteScreen from "./screens/UploadNoteScreen";
-import NoteDetailScreen from "./screens/NoteDetailScreen";
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-// Simple screen switching logic without navigation
+import NoteScreen from './screens/NoteScreen';
+import AddNoteScreen from './screens/AddNoteScreen';
+import NoteDetailScreen from './screens/NoteDetailScreen';
+
+const Stack = createNativeStackNavigator();
+
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<{
     name: string;
@@ -74,13 +74,24 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" />
-      {renderScreen()}
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Notes"
+          component={NoteScreen}
+          options={{ title: 'Lecture Notes' }}
+        />
+        <Stack.Screen
+          name="AddNote"
+          component={AddNoteScreen}
+          options={{ title: 'Upload Note' }}
+        />
+        <Stack.Screen
+          name="Details"
+          component={NoteDetailScreen}
+          options={{ title: 'Note Details' }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-});

@@ -12,8 +12,7 @@ type Props = {
   onRegister: () => void;
 };
 
-// Wrap everything inside a component function
-export default function LoginScreen({ onLogin, onRegister }: Props) {
+const LoginScreen = ({ onLogin, onRegister }: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -42,7 +41,9 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
       </TouchableOpacity>
     </View>
   );
-}
+};
+
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {

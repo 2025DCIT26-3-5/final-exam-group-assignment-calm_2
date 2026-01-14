@@ -9,8 +9,6 @@ import NoteDetailScreen from './screens/NoteDetailScreen';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-<<<<<<< HEAD
-=======
   const [currentScreen, setCurrentScreen] = useState<{
     name: string;
     params?: any;
@@ -75,7 +73,6 @@ export default function App() {
     }
   };
 
->>>>>>> 7c407d94c32b9753bc6faf6ea225e8bd121b43d8
   return (
     <NavigationContainer>
       <Stack.Navigator>

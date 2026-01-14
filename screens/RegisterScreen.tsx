@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     width: "90%",
-    marginBottom: 10,
+    marginBottom: 7,
   },
 
   loginButton: {

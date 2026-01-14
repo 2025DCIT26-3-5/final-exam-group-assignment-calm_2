@@ -1,11 +1,7 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button } from 'react-native';
-import { createNote } from '../services/api';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-export default function AddNoteScreen({ navigation }: any) {
-  const [title, setTitle] = useState('');
-  const [professor, setProfessor] = useState('');
-  const [content, setContent] = useState('');
+type Note = { id: number; title: string; content: string; rating: number };
 
 type Props = {
   note: Note;
@@ -22,8 +18,6 @@ export default function NoteDetailScreen({
   notes,
   onLogout,
 }: Props) {
-  const [showLogout, setShowLogout] = useState(false);
-
   const upvote = () => {
     const updatedNotes = notes.map((n) =>
       n.id === note.id ? { ...n, rating: n.rating + 1 } : n
@@ -40,29 +34,6 @@ export default function NoteDetailScreen({
 
   return (
     <View style={styles.container}>
-      {/* Avatar Icon */}
-      {onLogout && (
-        <TouchableOpacity
-          style={styles.avatarContainer}
-          onPress={() => setShowLogout(!showLogout)}
-        >
-          <Image
-              source={{
-                uri: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-              }}
-              style={styles.avatar}
-            />
-
-        </TouchableOpacity>
-      )}
-
-      {/* Conditional Logout Button */}
-      {showLogout && onLogout && (
-        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
-          <Text style={styles.buttonText}>Logout</Text>
-        </TouchableOpacity>
-      )}
-
       <Text style={styles.title}>{note.title}</Text>
       <Text style={styles.content}>{note.content}</Text>
       <Text style={styles.rating}>Rating: {note.rating}</Text>
@@ -79,20 +50,20 @@ export default function NoteDetailScreen({
       <TouchableOpacity style={styles.backButton} onPress={onBack}>
         <Text style={styles.buttonText}>Back</Text>
       </TouchableOpacity>
+
+      {/* Optional Logout Button */}
+      {onLogout && (
+        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+          <Text style={styles.buttonText}>Logout</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#f0f8ff" },
-  avatarContainer: {
-    position: "absolute",
-    top: 20,
-    right: 20,
-    zIndex: 10,
-  },
-  avatar: { width: 40, height: 40, borderRadius: 20 },
-  title: { fontSize: 28, fontWeight: "bold", marginBottom: 10, marginTop: 60 },
+  title: { fontSize: 28, fontWeight: "bold", marginBottom: 10 },
   content: { fontSize: 16, marginBottom: 10 },
   rating: { fontSize: 16, fontWeight: "bold", marginBottom: 20 },
   buttonRow: {
@@ -112,10 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#dc3545",
     padding: 15,
     borderRadius: 8,
-    position: "absolute",
-    top: 70,
-    right: 20,
-    zIndex: 9,
+    marginTop: 10,
   },
   buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
 });

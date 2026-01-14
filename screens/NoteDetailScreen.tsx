@@ -1,76 +1,89 @@
-import { useState } from "react";
-import { View, Text, Button, ActivityIndicator, Alert } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../types";
-import StarRating from "../components/StarRating";
-import API_URL from "../services/api";
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-type Props = NativeStackScreenProps<RootStackParamList, "NoteDetail">;
+type Note = { id: number; title: string; content: string; rating: number };
 
-export default function NoteDetailScreen({ route }: Props) {
-  const { note } = route.params;
-  const [rating, setRating] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+type Props = {
+  note: Note;
+  onBack: () => void;
+  onRate: (notes: Note[]) => void;
+  notes: Note[];
+  onLogout?: () => void; // optional logout prop
+};
 
-  const submitRating = () => {
-    if (rating === 0) {
-      Alert.alert("Error", "Please select a rating");
-      return;
-    }
-
-    setLoading(true);
-    fetch(`${API_URL}/ratings/${note.id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rating }),
-    })
-      .then((res) => res.json())
-      .then((updatedNote) => {
-        setLoading(false);
-        Alert.alert("Success", `You rated this note ${rating} stars`);
-        note.avgRating =
-          updatedNote.ratings.reduce((a: number, b: number) => a + b, 0) /
-          updatedNote.ratings.length;
-      })
-      .catch(() => {
-        setError("Failed to submit rating");
-        setLoading(false);
-      });
+export default function NoteDetailScreen({
+  note,
+  onBack,
+  onRate,
+  notes,
+  onLogout,
+}: Props) {
+  const upvote = () => {
+    const updatedNotes = notes.map((n) =>
+      n.id === note.id ? { ...n, rating: n.rating + 1 } : n
+    );
+    onRate(updatedNotes);
   };
 
-  if (loading)
-    return (
-      <View style={{ padding: 20 }}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Submitting rating...</Text>
-      </View>
+  const downvote = () => {
+    const updatedNotes = notes.map((n) =>
+      n.id === note.id ? { ...n, rating: n.rating - 1 } : n
     );
-
-  if (error)
-    return (
-      <View style={{ padding: 20 }}>
-        <Text style={{ color: "red" }}>{error}</Text>
-        <Button title="Retry" onPress={submitRating} />
-      </View>
-    );
+    onRate(updatedNotes);
+  };
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text style={{ fontWeight: "bold", fontSize: 18 }}>{note.title}</Text>
-      <Text style={{ fontStyle: "italic", marginBottom: 10 }}>
-        Uploaded by: Anonymous
-      </Text>
-      <Text style={{ marginBottom: 10 }}>{note.content}</Text>
-      <Text style={{ marginBottom: 10 }}>
-        Current Average Rating:{" "}
-        {note.avgRating ? note.avgRating.toFixed(1) : "No ratings yet"} ⭐
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>{note.title}</Text>
+      <Text style={styles.content}>{note.content}</Text>
+      <Text style={styles.rating}>Rating: {note.rating}</Text>
 
-      <Text>Rate this note:</Text>
-      <StarRating rating={rating} setRating={setRating} />
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={styles.button} onPress={upvote}>
+          <Text style={styles.buttonText}>Upvote</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={downvote}>
+          <Text style={styles.buttonText}>Downvote</Text>
+        </TouchableOpacity>
+      </View>
 
-      <Button title="Submit Rating" onPress={submitRating} />
+      <TouchableOpacity style={styles.backButton} onPress={onBack}>
+        <Text style={styles.buttonText}>Back</Text>
+      </TouchableOpacity>
+
+      {/* Optional Logout Button */}
+      {onLogout && (
+        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+          <Text style={styles.buttonText}>Logout</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20, backgroundColor: "#f0f8ff" },
+  title: { fontSize: 28, fontWeight: "bold", marginBottom: 10 },
+  content: { fontSize: 16, marginBottom: 10 },
+  rating: { fontSize: 16, fontWeight: "bold", marginBottom: 20 },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  button: {
+    flex: 1,
+    backgroundColor: "#28a745",
+    padding: 15,
+    borderRadius: 8,
+    marginHorizontal: 5,
+  },
+  backButton: { backgroundColor: "#007BFF", padding: 15, borderRadius: 8 },
+  logoutButton: {
+    backgroundColor: "#dc3545",
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
+});

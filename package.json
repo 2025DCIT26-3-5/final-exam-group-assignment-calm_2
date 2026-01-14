@@ -1,7 +1,8 @@
 {
   "name": "hello-pilipinas",
   "version": "1.0.0",
-  "main": "./types/index.ts",
+  "type": "module",
+  "main": "index.ts",
   "scripts": {
     "start": "expo start",
     "tunnel": "expo start --tunnel",

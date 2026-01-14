@@ -24,8 +24,7 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "Logo_Only": "./assets/Logo_Only.png",
-      "backgroundColor": "#ffffff"
+      "favicon": "./assets/Logo_Only.png"
     }
   }
 }

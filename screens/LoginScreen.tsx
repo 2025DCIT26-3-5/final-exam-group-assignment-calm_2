@@ -12,7 +12,6 @@ type Props = {
   onRegister: () => void;
 };
 
-export default function LoginScreen({ onLogin, onRegister }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 

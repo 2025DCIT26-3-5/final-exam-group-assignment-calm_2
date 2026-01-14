@@ -9,11 +9,18 @@ import {
 
 type Props = {
   onBack: () => void;
+  onRegister?: (email: string, password: string) => void; // optional
 };
 
-export default function RegisterScreen({ onBack }: Props) {
+export default function RegisterScreen({ onBack, onRegister }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleRegister = () => {
+    if (onRegister && email && password) {
+      onRegister(email, password);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -32,6 +39,13 @@ export default function RegisterScreen({ onBack }: Props) {
         onChangeText={setPassword}
         secureTextEntry
       />
+
+      {/* Register Account button */}
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Register Account!</Text>
+      </TouchableOpacity>
+
+      {/* Back to Login button */}
       <TouchableOpacity style={styles.button} onPress={onBack}>
         <Text style={styles.buttonText}>Back to Login</Text>
       </TouchableOpacity>
@@ -59,6 +73,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 15,
   },
-  button: { backgroundColor: "#007BFF", padding: 15, borderRadius: 8 },
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  registerButton: {
+    backgroundColor: "#90ee90", // light green
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
   buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
 });

@@ -3,10 +3,10 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   Image,
+  Pressable,
 } from "react-native";
 
 type Props = {
@@ -17,6 +17,18 @@ type Props = {
 export default function LoginScreen({ onLogin, onRegister }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  // Validation
+  const emailValid = email.includes("@");
+  const passwordValid = password.length >= 8;
+  const formValid = emailValid && passwordValid;
+
+  const handleLogin = () => {
+    setSubmitted(true);
+    if (!formValid) return;
+    onLogin();
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -27,10 +39,12 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
         resizeMode="contain"
       />
 
-      <Text style={styles.title}>Welcome to UniNotes! Login Now</Text>
+      <Text style={styles.title}>Welcome to UniNotes</Text>
+      <Text style={styles.subtitle}>Login to continue</Text>
 
       {/* Input Card */}
       <View style={styles.inputCard}>
+        {/* Email */}
         <View style={styles.inputGroup}>
           <Text style={styles.inputLabel}>Email</Text>
           <TextInput
@@ -39,9 +53,18 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
+            keyboardType="email-address"
+            placeholderTextColor="#8A8A8A"
           />
+
+          {submitted && !emailValid && (
+            <Text style={styles.errorText}>
+              Email must contain @ symbol
+            </Text>
+          )}
         </View>
 
+        {/* Password */}
         <View style={styles.inputGroup}>
           <Text style={styles.inputLabel}>Password</Text>
           <TextInput
@@ -50,19 +73,43 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
             value={password}
             onChangeText={setPassword}
             secureTextEntry
+            placeholderTextColor="#8A8A8A"
           />
+
+          {submitted && !passwordValid && (
+            <Text style={styles.errorText}>
+              Password must be at least 8 characters
+            </Text>
+          )}
         </View>
       </View>
 
       {/* Login Button */}
-      <TouchableOpacity style={styles.loginButton} onPress={onLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
+      <Pressable
+        onPress={handleLogin}
+        disabled={!formValid}
+        style={({ pressed}) => [
+          styles.loginButton,
+          (!formValid || pressed) && styles.loginButtonActive,
+          !formValid && styles.loginButtonDisabled,
+        ]}
+      >
+        <Text style={styles.loginText}>Login</Text>
+      </Pressable>
 
-      {/* Register Button */}
-      <TouchableOpacity style={styles.registerButton} onPress={onRegister}>
-        <Text style={styles.buttonText}>Don't have an account? Register here!</Text>
-      </TouchableOpacity>
+      {/* Register Text */}
+      <Pressable onPress={onRegister}>
+        {({ pressed}) => (
+          <Text
+            style={[
+              styles.registerText,
+              ( pressed ) && styles.registerTextActive,
+            ]}
+          >
+            Don’t have an account? Register
+          </Text>
+        )}
+      </Pressable>
     </SafeAreaView>
   );
 }
@@ -70,71 +117,109 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F0E68C",
-    justifyContent: "center",
+    backgroundColor: "#EAF4FF",
     alignItems: "center",
-    padding: 20,
+    paddingHorizontal: 20,
   },
+
   logo: {
-    width: 450,
-    height: 450,
-    maxWidth: 500,
-    maxHeight: 500,
-    marginBottom: 50,
-    position: "absolute",
-    top: -100,
+    width: 300,
+    height: 300,
+    marginTop: -60,
   },
+
   title: {
-    marginTop: 250,
     fontSize: 28,
     fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
-    color: "#000",
+    color: "#1A1A1A",
+    marginTop: 10,
   },
+
+  subtitle: {
+    fontSize: 16,
+    color: "#555",
+    marginBottom: 20,
+  },
+
   inputCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 18,
+    padding: 24,
     width: "90%",
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    maxWidth: 420,
+    marginBottom: 20,
     shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 3,
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 10,
+    elevation: 5,
   },
-  inputGroup: { marginBottom: 15 },
+
+  inputGroup: {
+    marginBottom: 16,
+  },
+
   inputLabel: {
     fontWeight: "600",
-    marginBottom: 5,
-    color: "#555",
+    marginBottom: 6,
+    color: "#444",
   },
+
   input: {
-    backgroundColor: "#f9f9f9",
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: "#F3F8FE",
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#D6E6F5",
   },
+
+  errorText: {
+    marginTop: 6,
+    fontSize: 12,
+    color: "#E74C3C",
+    fontWeight: "600",
+  },
+
   loginButton: {
-    backgroundColor: "#28a745", // green
-    padding: 15,
-    borderRadius: 8,
+    backgroundColor: "#2D9CDB",
+    paddingVertical: 16,
+    borderRadius: 14,
     width: "90%",
-    marginBottom: 10,
+    maxWidth: 420,
+    marginBottom: 12,
+    alignItems: "center",
+    shadowColor: "#2D9CDB",
+    shadowOpacity: 0.35,
+    shadowOffset: { width: 0, height: 6 },
+    shadowRadius: 10,
+    elevation: 6,
   },
-  registerButton: {
-    backgroundColor: "#007BFF", // blue
-    padding: 15,
-    borderRadius: 8,
-    width: "90%",
+
+  loginButtonActive: {
+    backgroundColor: "#1B7FC1",
+    transform: [{ scale: 0.98 }],
   },
-  buttonText: {
-    color: "#fff",
-    textAlign: "center",
+
+  loginButtonDisabled: {
+    backgroundColor: "#9CCAF0",
+    shadowOpacity: 0,
+  },
+
+  loginText: {
+    color: "#FFFFFF",
     fontWeight: "bold",
+    fontSize: 16,
+  },
+
+  registerText: {
+    color: "#2D9CDB",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+
+  registerTextActive: {
+    color: "#1B7FC1",
+    textDecorationLine: "underline",
   },
 });

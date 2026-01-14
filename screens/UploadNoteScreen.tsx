@@ -37,59 +37,67 @@ export default function UploadNoteScreen({
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Avatar */}
-      {onLogout && (
-        <TouchableOpacity
-          style={styles.avatarContainer}
-          onPress={() => setShowLogout(!showLogout)}
-        >
-          <Image
-            source={{
-              uri: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-            }}
-            style={styles.avatar}
-          />
-        </TouchableOpacity>
-      )}
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Upload Note</Text>
+
+        {onLogout && (
+          <TouchableOpacity onPress={() => setShowLogout(!showLogout)}>
+            <Image
+              source={{
+                uri: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+              }}
+              style={styles.avatar}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
 
       {/* Logout */}
       {showLogout && onLogout && (
         <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
-          <Text style={styles.buttonText}>Logout</Text>
+          <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       )}
 
-      <Text style={styles.title}>Upload Note</Text>
-
-      {/* Input Form */}
-      <View style={styles.inputCard}>
+      {/* Card */}
+      <View style={styles.card}>
         <View style={styles.inputGroup}>
-          <Text style={styles.inputLabel}>Title</Text>
+          <Text style={styles.label}>Title</Text>
           <TextInput
             style={styles.input}
+            placeholder="Enter note title"
             value={title}
             onChangeText={setTitle}
           />
         </View>
 
-        <View style={[styles.inputGroup, { marginTop: 15 }]}>
-          <Text style={styles.inputLabel}>Content</Text>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Content</Text>
           <TextInput
-            style={[styles.input, { height: 100, textAlignVertical: "top" }]}
+            style={[styles.input, styles.textArea]}
+            placeholder="Write your note here..."
             value={content}
             onChangeText={setContent}
             multiline
           />
         </View>
-      </View>
 
-      {/* Buttons */}
-      <TouchableOpacity style={styles.saveButton} onPress={saveNote}>
-        <Text style={styles.buttonText}>Save Note</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.backButton} onPress={onBack}>
-        <Text style={styles.buttonText}>Back</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.saveButton,
+            (!title || !content) && { opacity: 0.5 },
+          ]}
+          onPress={saveNote}
+          disabled={!title || !content}
+        >
+          <Text style={styles.buttonText}>Save Note</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.backButton} onPress={onBack}>
+          <Text style={styles.backText}>Back</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -97,84 +105,103 @@ export default function UploadNoteScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F0E68C", // khaki
+    backgroundColor: "#EAF4FF",
     padding: 20,
+  },
+
+  /* Header */
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
+    maxWidth: 420,
+    width: "100%",
+    alignSelf: "center",
+    marginBottom: 20,
   },
-  avatarContainer: {
-    position: "absolute",
-    top: 20,
-    right: 20,
-    zIndex: 10,
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#1A1A1A",
   },
-  avatar: { width: 40, height: 40, borderRadius: 20 },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+
+  /* Logout */
   logoutButton: {
     position: "absolute",
-    top: 70,
-    right: 20,
-    backgroundColor: "#dc3545",
+    top: 80,
+    right: 30,
+    backgroundColor: "#E74C3C",
     paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
+    paddingHorizontal: 16,
+    borderRadius: 10,
     zIndex: 10,
+  },
+  logoutText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
+  /* Card */
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 20,
+    width: "100%",
+    maxWidth: 420,
+    alignSelf: "center",
     shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 10,
     elevation: 5,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginTop: 60,
-    marginBottom: 20,
-  },
 
-  // Input Card
-  inputCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 3,
-    width: "90%",
-  },
   inputGroup: {
-    marginBottom: 10,
+    marginBottom: 14,
   },
-  inputLabel: {
+  label: {
+    fontSize: 13,
     fontWeight: "600",
-    marginBottom: 5,
     color: "#555",
+    marginBottom: 6,
   },
   input: {
-    backgroundColor: "#f9f9f9",
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: "#F9FBFD",
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#D6E6F5",
+  },
+  textArea: {
+    height: 120,
+    textAlignVertical: "top",
   },
 
-  // Buttons
+  /* Buttons */
   saveButton: {
-    backgroundColor: "#28a745",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-    width: "90%",
+    backgroundColor: "#2D9CDB",
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginTop: 10,
   },
   backButton: {
-    backgroundColor: "#007BFF",
-    padding: 15,
-    borderRadius: 8,
-    width: "90%",
+    marginTop: 14,
   },
-  buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  backText: {
+    textAlign: "center",
+    color: "#2D9CDB",
+    fontWeight: "600",
+  },
 });

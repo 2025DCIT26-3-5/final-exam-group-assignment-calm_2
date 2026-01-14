@@ -7,12 +7,10 @@ import {
   StyleSheet,
 } from "react-native";
 
-type Note = { id: number; title: string; content: string; rating: number };
-
 type Props = {
-  notes: Note[];
+  notes: any[];
   onUpload: () => void;
-  onOpenNote: (note: Note) => void;
+  onOpenNote: (note: any) => void;
 };
 
 export default function NotesListScreen({

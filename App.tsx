@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { View, StyleSheet } from "react-native";
 import LoginScreen from "./screens/LoginScreen";
@@ -7,28 +7,24 @@ import NotesListScreen from "./screens/NotesListScreen";
 import UploadNoteScreen from "./screens/UploadNoteScreen";
 import NoteDetailScreen from "./screens/NoteDetailScreen";
 
-// Simple screen switching logic without navigation
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<{
     name: string;
     params?: any;
   }>({ name: "Login" });
+  const [notes, setNotes] = useState<any[]>([]);
 
-  const [notes, setNotes] = useState<
-    {
-      id: number;
-      title: string;
-      content: string;
-      rating: number;
-    }[]
-  >([]);
-
-  const openScreen = (name: string, params?: any) => {
+  const openScreen = (name: string, params?: any) =>
     setCurrentScreen({ name, params });
-  };
 
-  const updateNotes = (newNotes: typeof notes) => {
-    setNotes(newNotes);
+  const fetchNotes = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/notes");
+      const data = await response.json();
+      setNotes(data);
+    } catch (err) {
+      console.error("Failed to fetch notes:", err);
+    }
   };
 
   const renderScreen = () => {
@@ -36,7 +32,10 @@ export default function App() {
       case "Login":
         return (
           <LoginScreen
-            onLogin={() => openScreen("NotesList")}
+            onLogin={() => {
+              fetchNotes();
+              openScreen("NotesList");
+            }}
             onRegister={() => openScreen("Register")}
           />
         );
@@ -47,30 +46,45 @@ export default function App() {
           <NotesListScreen
             notes={notes}
             onUpload={() => openScreen("UploadNote")}
-            onOpenNote={(note: any) => openScreen("NoteDetail", { note })}
+            onOpenNote={(note) => openScreen("NoteDetail", { note })}
           />
         );
       case "UploadNote":
         return (
           <UploadNoteScreen
             notes={notes}
-            onSave={updateNotes}
-            onBack={() => openScreen("NotesList")}
+            onSave={fetchNotes}
+            onBack={() => {
+              fetchNotes();
+              openScreen("NotesList");
+            }}
           />
         );
       case "NoteDetail":
         return (
           <NoteDetailScreen
             note={currentScreen.params.note}
-            onBack={() => openScreen("NotesList")}
-            onRate={updateNotes}
+            onBack={() => {
+              fetchNotes();
+              openScreen("NotesList");
+            }}
             notes={notes}
+            onRate={fetchNotes}
           />
         );
       default:
-        return <LoginScreen onLogin={() => openScreen("NotesList")} />;
+        return (
+          <LoginScreen
+            onLogin={() => openScreen("NotesList")}
+            onRegister={() => openScreen("Register")}
+          />
+        );
     }
   };
+
+  useEffect(() => {
+    if (currentScreen.name === "NotesList") fetchNotes();
+  }, [currentScreen.name]);
 
   return (
     <View style={styles.container}>

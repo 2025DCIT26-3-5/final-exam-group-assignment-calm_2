@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  SafeAreaView,
 } from "react-native";
 
 type Note = { id: number; title: string; content: string; rating: number };
@@ -27,85 +28,122 @@ export default function NotesListScreen({
   const sortedNotes = [...notes].sort((a, b) => b.rating - a.rating);
 
   return (
-    <View style={styles.container}>
-      {/* Avatar Icon */}
-      <TouchableOpacity
-        style={styles.avatarContainer}
-        onPress={() => setShowLogout(!showLogout)}
-      >
-        <Image
-          source={{
-            uri: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-          }}
-          style={styles.avatar}
-        />
-      </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Lecture Notes</Text>
+        <TouchableOpacity onPress={() => setShowLogout(!showLogout)}>
+          <Image
+            source={{
+              uri: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+            }}
+            style={styles.avatar}
+          />
+        </TouchableOpacity>
+      </View>
 
-      {/* Conditional Logout Button */}
+      {/* Conditional Logout */}
       {showLogout && (
         <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
-          <Text style={styles.buttonText}>Logout</Text>
+          <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       )}
 
-      <Text style={styles.title}>Lecture Notes</Text>
+      {/* Notes List */}
       <FlatList
         data={sortedNotes}
         keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={{ paddingBottom: 100 }}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={styles.note}
+            style={styles.noteCard}
             onPress={() => onOpenNote(item)}
           >
             <Text style={styles.noteTitle}>{item.title}</Text>
-            <Text>Rating: {item.rating}</Text>
+            <Text style={styles.noteRating}>⭐ {item.rating}</Text>
           </TouchableOpacity>
         )}
       />
-      <TouchableOpacity style={styles.button} onPress={onUpload}>
-        <Text style={styles.buttonText}>Upload Note</Text>
+
+      {/* Floating Upload Button */}
+      <TouchableOpacity style={styles.fab} onPress={onUpload}>
+        <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#f0f8ff" },
-  avatarContainer: {
-    position: "absolute",
-    top: 20,
-    right: 20,
-    zIndex: 10,
+  container: { 
+    flex: 1, 
+    backgroundColor: "#F0E68C", // khaki color
   },
+
+  // Header
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#b3882e",
+    borderBottomWidth: 1,
+    borderBottomColor: "#000000",
+  },
+  headerTitle: { fontSize: 24, fontWeight: "bold", color: "#333" },
+
   avatar: { width: 40, height: 40, borderRadius: 20 },
+
+  // Logout
   logoutButton: {
-    backgroundColor: "#dc3545",
-    padding: 15,
-    borderRadius: 8,
     position: "absolute",
     top: 70,
     right: 20,
-    zIndex: 9,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-    marginTop: 60, // space below avatar
-  },
-  note: {
-    padding: 15,
-    backgroundColor: "#fff",
+    backgroundColor: "#dc3545",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     borderRadius: 8,
-    marginBottom: 10,
+    zIndex: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 5,
   },
-  noteTitle: { fontWeight: "bold", marginBottom: 5 },
-  button: {
+  logoutText: { color: "#fff", fontWeight: "bold" },
+
+  // Note Cards
+  noteCard: {
+    backgroundColor: "#caa94d",
+    marginHorizontal: 20,
+    marginVertical: 8,
+    padding: 20,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  noteTitle: { fontSize: 18, fontWeight: "600", marginBottom: 5 },
+  noteRating: { fontSize: 14, color: "#000000" },
+
+  // Floating Action Button
+  fab: {
+    position: "absolute",
+    bottom: 30,
+    right: 30,
     backgroundColor: "#007BFF",
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 10,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 5,
+    elevation: 6,
   },
-  buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
+  fabText: { fontSize: 30, color: "#fff", fontWeight: "bold" },
 });
+

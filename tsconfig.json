@@ -2,7 +2,9 @@
   "compilerOptions": {
     "isolatedModules": true,
     "moduleResolution": "bundler",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true
   },
   "extends": "expo/tsconfig.base.json"
 }

@@ -126,12 +126,15 @@ const styles = StyleSheet.create({
   /* Header */
   header: {
     width: "100%",
-    maxWidth: 420,
     flexDirection: "row",
     justifyContent: "space-between",
     alignSelf: "center",
     paddingVertical: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
+    minWidth: 420,
+    borderBottomColor: "#D6E6F5",
+    borderBottomWidth: 1,
+    marginBottom: 10,
   },
   headerTitle: {
     fontSize: 24,
@@ -164,7 +167,8 @@ const styles = StyleSheet.create({
   /* Search Bar */
   searchContainer: {
     width: "100%",
-    maxWidth: 420,
+    minWidth: 420,
+    maxWidth: 800,
     alignSelf: "center",
     marginBottom: 10,
   },

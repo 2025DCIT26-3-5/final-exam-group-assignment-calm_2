@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
     marginBottom: 20,
+    marginTop: 10,
   },
   headerTitle: {
     fontSize: 24,

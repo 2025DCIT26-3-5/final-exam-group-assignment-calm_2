@@ -12,12 +12,10 @@ import { useNotes, Note } from "../contexts/NotesContext";
 type Props = {
   note: Note;
   onBack: () => void;
-  onLogout?: () => void;
 };
 
-export default function NoteDetailScreen({ note, onBack, onLogout }: Props) {
+export default function NoteDetailScreen({ note, onBack }: Props) {
   const { notes, updateNotes } = useNotes();
-  const [showLogout, setShowLogout] = useState(false);
 
   const currentNote = notes.find((n) => n.id === note.id) || note;
 
@@ -42,44 +40,17 @@ export default function NoteDetailScreen({ note, onBack, onLogout }: Props) {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require("../assets/Logo_Only.png")} 
-            style={styles.logo}
-            resizeMode="contain"
-          />
-          <Text style={styles.headerTitle}>UniNotes</Text>
-        </View>
-
-        {onLogout && (
-          <TouchableOpacity onPress={() => setShowLogout(!showLogout)}>
-            <Image
-              source={{
-                uri: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-              }}
-              style={styles.avatar}
-            />
-          </TouchableOpacity>
-        )}
+          <Text style={styles.headerTitle}>UniNotes</Text> 
       </View>
 
-      {/* Logout */}
-      {showLogout && onLogout && (
-        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
-      )}
-
-      {/* Card */}
+      {/* Note Card */}
       <View style={styles.card}>
         <Text style={styles.noteTitle}>{currentNote.title}</Text>
         <Text style={styles.noteContent}>{currentNote.content}</Text>
 
         {/* Rating */}
         <View style={styles.ratingContainer}>
-          <Text style={styles.avgText}>
-            ⭐ Average: {averageRating.toFixed(1)}
-          </Text>
+          <Text style={styles.avgText}>⭐ Average: {averageRating.toFixed(1)}</Text>
           <View style={styles.buttonsRow}>
             {[1, 2, 3, 4, 5].map((r) => (
               <TouchableOpacity
@@ -106,52 +77,30 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#EAF4FF",
     alignItems: "center",
-    justifyContent: "flex-start",
-    paddingTop: 20,
+    paddingTop: 0,
   },
 
   /* Header */
   header: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: 400, 
-    marginBottom: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    minWidth: 420,
+    borderBottomColor: "#D6E6F5",
+    borderBottomWidth: 1,
+    marginBottom: 10,
   },
   logoContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
-  logo: {
-    width: 40,
-    height: 40,
-    marginRight: 10,
-  },
   headerTitle: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#1A1A1A",
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-
-  /* Logout */
-  logoutButton: {
-    position: "absolute",
-    top: 80,
-    right: 30,
-    backgroundColor: "#E74C3C",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    zIndex: 10,
-  },
-  logoutText: {
-    color: "#fff",
-    fontWeight: "bold",
   },
 
   /* Card */
@@ -159,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 16,
     padding: 20,
-    width: 400, 
+    width: 400,
     alignSelf: "center",
     shadowColor: "#000",
     shadowOpacity: 0.08,
@@ -167,7 +116,6 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-
   noteTitle: {
     fontSize: 18,
     fontWeight: "700",
@@ -191,7 +139,7 @@ const styles = StyleSheet.create({
   buttonsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: 220, 
+    width: 220,
   },
   ratingButton: {
     backgroundColor: "#2D9CDB",
@@ -206,10 +154,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 16,
   },
-
   backButton: {
     marginTop: 10,
-    width: 400, 
+    width: 400,
   },
   backText: {
     textAlign: "center",

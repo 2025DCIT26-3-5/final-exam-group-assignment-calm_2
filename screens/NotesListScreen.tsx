@@ -40,7 +40,8 @@ export default function NotesListScreen({
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>UniNotes</Text>
+        
+          <Text style={styles.headerTitle}>UniNotes</Text>
 
         <TouchableOpacity onPress={() => setShowLogout(!showLogout)}>
           <Image
@@ -70,13 +71,13 @@ export default function NotesListScreen({
         />
       </View>
 
-      {/* Notes List - full width for scrollbar */}
+      {/* Notes List */}
       <FlatList
         data={filteredNotes}
         keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={true} // scrollbar on the far right
+        showsVerticalScrollIndicator={true}
         contentContainerStyle={styles.listContent}
-        style={{ width: screenWidth }} // full width for scroll bar
+        style={{ width: screenWidth }}
         renderItem={({ item }) => (
           <View style={styles.noteCardWrapper}>
             <TouchableOpacity
@@ -136,11 +137,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     marginBottom: 10,
   },
+  logoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   headerTitle: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#1A1A1A",
-    marginTop: 6,
+    marginTop: 0,
   },
   avatar: {
     width: 40,
@@ -187,13 +192,13 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   noteCardWrapper: {
-    alignItems: "center", // center the fixed-width card inside full-width list
+    alignItems: "center",
   },
   noteCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 16,
-    width: 400, // fixed width card
+    width: 400,
     height: 140,
     marginVertical: 10,
     justifyContent: "space-between",

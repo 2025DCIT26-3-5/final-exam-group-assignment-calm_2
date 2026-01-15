@@ -58,9 +58,7 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
           />
 
           {submitted && !emailValid && (
-            <Text style={styles.errorText}>
-              Email must contain @ symbol
-            </Text>
+            <Text style={styles.errorText}>Email must contain @ symbol</Text>
           )}
         </View>
 
@@ -88,7 +86,7 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
       <Pressable
         onPress={handleLogin}
         disabled={!formValid}
-        style={({ pressed}) => [
+        style={({ pressed }) => [
           styles.loginButton,
           (!formValid || pressed) && styles.loginButtonActive,
           !formValid && styles.loginButtonDisabled,
@@ -99,12 +97,9 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
 
       {/* Register Text */}
       <Pressable onPress={onRegister}>
-        {({ pressed}) => (
+        {({ pressed }) => (
           <Text
-            style={[
-              styles.registerText,
-              ( pressed ) && styles.registerTextActive,
-            ]}
+            style={[styles.registerText, pressed && styles.registerTextActive]}
           >
             Don’t have an account? Register
           </Text>
@@ -132,7 +127,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     color: "#1A1A1A",
-    marginTop: 10,
+    marginTop: -20,
   },
 
   subtitle: {

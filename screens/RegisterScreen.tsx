@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 10,
     elevation: 5,
+    marginTop: -20,
   },
 
   title: {

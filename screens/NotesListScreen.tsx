@@ -9,30 +9,30 @@ import {
   SafeAreaView,
   TextInput,
 } from "react-native";
-
-type Note = { id: number; title: string; content: string; rating: number };
+import { useNotes, Note } from "../contexts/NotesContext";
 
 type Props = {
-  notes: Note[];
   onUpload: () => void;
   onOpenNote: (note: Note) => void;
   onLogout: () => void;
 };
 
 export default function NotesListScreen({
-  notes,
   onUpload,
   onOpenNote,
   onLogout,
 }: Props) {
+  const { notes } = useNotes();
   const [showLogout, setShowLogout] = useState(false);
   const [search, setSearch] = useState("");
 
+  // Calculate average rating
+  const getAvg = (ratings: number[]) =>
+    ratings.length ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
+
   const filteredNotes = [...notes]
-    .filter((note) =>
-      note.title.toLowerCase().includes(search.toLowerCase())
-    )
-    .sort((a, b) => b.rating - a.rating);
+    .filter((note) => note.title.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => getAvg(b.ratings) - getAvg(a.ratings));
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,7 +81,7 @@ export default function NotesListScreen({
             {/* Title */}
             <Text
               style={styles.noteTitle}
-              numberOfLines={2} 
+              numberOfLines={2}
               ellipsizeMode="tail"
             >
               {item.title}
@@ -90,7 +90,7 @@ export default function NotesListScreen({
             {/* Content */}
             <Text
               style={styles.noteContent}
-              numberOfLines={3} 
+              numberOfLines={3}
               ellipsizeMode="tail"
             >
               {item.content}
@@ -99,7 +99,9 @@ export default function NotesListScreen({
             {/* Rating badge */}
             <View style={styles.cardFooter}>
               <View style={styles.ratingBadge}>
-                <Text style={styles.ratingText}>⭐ {item.rating}</Text>
+                <Text style={styles.ratingText}>
+                  ⭐ {getAvg(item.ratings).toFixed(1)}
+                </Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -120,8 +122,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#EAF4FF",
     alignItems: "center",
   },
-
-  /* Header */
   header: {
     width: "100%",
     maxWidth: 420,
@@ -137,14 +137,11 @@ const styles = StyleSheet.create({
     color: "#1A1A1A",
     marginTop: 6,
   },
-
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
   },
-
-  
   logoutButton: {
     backgroundColor: "#E74C3C",
     paddingVertical: 10,
@@ -159,8 +156,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-
-  
   searchContainer: {
     width: "90%",
     maxWidth: 420,
@@ -174,21 +169,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#D6E6F5",
   },
-
-  
   listContent: {
     paddingBottom: 120,
     alignItems: "center",
   },
-
-
   noteCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 16,
-    width: "90%",
+    width: "100%",
     maxWidth: 420,
-    height: 140, 
+    minWidth: 300,
+    height: 140,
     marginVertical: 10,
     justifyContent: "space-between",
     shadowColor: "#000",
@@ -197,23 +189,19 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-
   noteTitle: {
     fontSize: 16,
     fontWeight: "700",
     color: "#1A1A1A",
   },
-
   noteContent: {
     fontSize: 14,
     color: "#555",
     marginTop: 4,
   },
-
   cardFooter: {
     alignItems: "flex-end",
   },
-
   ratingBadge: {
     backgroundColor: "#2D9CDB",
     paddingHorizontal: 10,
@@ -227,8 +215,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "700",
   },
-
-  
   fab: {
     position: "absolute",
     bottom: 30,

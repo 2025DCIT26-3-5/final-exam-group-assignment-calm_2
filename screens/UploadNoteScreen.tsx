@@ -8,30 +8,22 @@ import {
   Image,
   SafeAreaView,
 } from "react-native";
-
-type Note = { id: number; title: string; content: string; rating: number };
+import { useNotes, Note } from "../contexts/NotesContext";
 
 type Props = {
-  notes: Note[];
-  onSave: (notes: Note[]) => void;
   onBack: () => void;
   onLogout?: () => void;
 };
 
-export default function UploadNoteScreen({
-  notes,
-  onSave,
-  onBack,
-  onLogout,
-}: Props) {
+export default function UploadNoteScreen({ onBack, onLogout }: Props) {
+  const { addNote } = useNotes();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [showLogout, setShowLogout] = useState(false);
 
   const saveNote = () => {
     if (!title || !content) return;
-    const newNote = { id: Date.now(), title, content, rating: 0 };
-    onSave([...notes, newNote]);
+    addNote({ title, content, rating: 0 }); // Add note to context
     onBack();
   };
 
@@ -84,10 +76,7 @@ export default function UploadNoteScreen({
         </View>
 
         <TouchableOpacity
-          style={[
-            styles.saveButton,
-            (!title || !content) && { opacity: 0.5 },
-          ]}
+          style={[styles.saveButton, (!title || !content) && { opacity: 0.5 }]}
           onPress={saveNote}
           disabled={!title || !content}
         >

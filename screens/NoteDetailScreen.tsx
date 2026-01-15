@@ -4,53 +4,48 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Image,
   SafeAreaView,
+  Image,
 } from "react-native";
-
-type Note = { id: number; title: string; content: string; rating: number };
+import { useNotes, Note } from "../contexts/NotesContext";
 
 type Props = {
   note: Note;
   onBack: () => void;
-  onRate: (notes: Note[]) => void;
-  notes: Note[];
   onLogout?: () => void;
 };
 
-export default function NoteDetailScreen({
-  note,
-  onBack,
-  onRate,
-  notes,
-  onLogout,
-}: Props) {
+export default function NoteDetailScreen({ note, onBack, onLogout }: Props) {
+  const { notes, updateNotes } = useNotes();
   const [showLogout, setShowLogout] = useState(false);
 
-  const upvote = () => {
-    const updatedNotes = notes.map((n) =>
-      n.id === note.id ? { ...n, rating: n.rating + 1 } : n
-    );
-    onRate(updatedNotes);
-  };
+  const currentNote = notes.find((n) => n.id === note.id) || note;
 
-  const downvote = () => {
-    const updatedNotes = notes.map((n) =>
-      n.id === note.id ? { ...n, rating: n.rating - 1 } : n
-    );
-    onRate(updatedNotes);
+  const averageRating =
+    currentNote.ratings && currentNote.ratings.length
+      ? currentNote.ratings.reduce((a, b) => a + b, 0) /
+        currentNote.ratings.length
+      : 0;
+
+  const addRating = (value: number) => {
+    const updatedNotes = notes.map((n) => {
+      if (n.id === currentNote.id) {
+        const updatedRatings = n.ratings ? [...n.ratings, value] : [value];
+        return { ...n, ratings: updatedRatings, rating: value };
+      }
+      return n;
+    });
+    updateNotes(updatedNotes);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Note Detail</Text>
+        <Text style={styles.headerTitle}>Note Details</Text>
 
         {onLogout && (
-          <TouchableOpacity
-            onPress={() => setShowLogout(!showLogout)}
-          >
+          <TouchableOpacity onPress={() => setShowLogout(!showLogout)}>
             <Image
               source={{
                 uri: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
@@ -68,65 +63,50 @@ export default function NoteDetailScreen({
         </TouchableOpacity>
       )}
 
-      {/* Note Card */}
-      <View style={styles.noteCard}>
-        <View style={styles.sectionBox}>
-          <Text style={styles.label}>Title</Text>
-          <Text style={styles.title}>{note.title}</Text>
+      {/* Card */}
+      <View style={styles.card}>
+        <Text style={styles.noteTitle}>{currentNote.title}</Text>
+        <Text style={styles.noteContent}>{currentNote.content}</Text>
+
+        {/* Rating */}
+        <View style={styles.ratingContainer}>
+          <Text style={styles.avgText}>
+            ⭐ Average: {averageRating.toFixed(1)}
+          </Text>
+          <View style={styles.buttonsRow}>
+            {[1, 2, 3, 4, 5].map((r) => (
+              <TouchableOpacity
+                key={r}
+                style={styles.ratingButton}
+                onPress={() => addRating(r)}
+              >
+                <Text style={styles.ratingText}>{r}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
-        <View style={styles.sectionBox}>
-          <Text style={styles.label}>Content</Text>
-          <Text style={styles.content}>{note.content}</Text>
-        </View>
-
-        <View style={styles.sectionBox}>
-          <Text style={styles.label}>Rating</Text>
-          <Text style={styles.rating}>{note.rating}</Text>
-        </View>
-
-        {/* Vote Buttons */}
-        <View style={styles.buttonRow}>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.upvote]}
-            onPress={upvote}
-          >
-            <Text style={styles.buttonText}>Upvote</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.actionButton, styles.downvote]}
-            onPress={downvote}
-          >
-            <Text style={styles.buttonText}>Downvote</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.backButton} onPress={onBack}>
+          <Text style={styles.backText}>Back</Text>
+        </TouchableOpacity>
       </View>
-
-      {/* Back */}
-      <TouchableOpacity style={styles.backButton} onPress={onBack}>
-        <Text style={styles.buttonText}>Back</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#EAF4FF", // same as login
-    alignItems: "center",
-    padding: 20,
-  },
+  container: { flex: 1, backgroundColor: "#EAF4FF", padding: 20 },
 
   /* Header */
   header: {
-    width: "100%",
-    maxWidth: 420,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    maxWidth: 420,
+    width: "100%",
+    alignSelf: "center",
+    marginBottom: 20,
+    marginTop: 10,
   },
   headerTitle: {
     fontSize: 24,
@@ -139,14 +119,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
 
+  /* Logout */
   logoutButton: {
+    position: "absolute",
+    top: 80,
+    right: 30,
     backgroundColor: "#E74C3C",
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 10,
-    position: "absolute",
-    top: 70,
-    right: 20,
     zIndex: 10,
   },
   logoutText: {
@@ -155,13 +136,13 @@ const styles = StyleSheet.create({
   },
 
   /* Card */
-  noteCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 18,
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
     padding: 20,
-    width: "90%",
+    width: "100%",
     maxWidth: 420,
-    marginTop: 10,
+    alignSelf: "center",
     shadowColor: "#000",
     shadowOpacity: 0.08,
     shadowOffset: { width: 0, height: 4 },
@@ -169,79 +150,51 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 
-  sectionBox: {
-    backgroundColor: "#F3F8FE",
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 14,
-    borderWidth: 1,
-    borderColor: "#D6E6F5",
+  noteTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1A1A1A",
+    marginBottom: 12,
+  },
+  noteContent: {
+    fontSize: 15,
+    color: "#555",
+    marginBottom: 20,
   },
 
-  label: {
+  ratingContainer: {
+    marginBottom: 20,
+  },
+  avgText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#555",
-    marginBottom: 4,
+    marginBottom: 10,
   },
-
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#1A1A1A",
-  },
-
-  content: {
-    fontSize: 16,
-    color: "#333",
-  },
-
-  rating: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#2D9CDB",
-  },
-
-  /* Buttons */
-  buttonRow: {
+  buttonsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
+    maxWidth: 250,
   },
-
-  actionButton: {
-    flex: 1,
-    paddingVertical: 14,
-    borderRadius: 12,
-    marginHorizontal: 5,
+  ratingButton: {
+    backgroundColor: "#2D9CDB",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
     alignItems: "center",
   },
-
-  upvote: {
-    backgroundColor: "#2ECC71",
-  },
-
-  downvote: {
-    backgroundColor: "#E67E22",
+  ratingText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 16,
   },
 
   backButton: {
-    backgroundColor: "#2D9CDB",
-    paddingVertical: 16,
-    borderRadius: 14,
-    width: "90%",
-    maxWidth: 420,
-    marginTop: 16,
-    shadowColor: "#2D9CDB",
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 6 },
-    shadowRadius: 10,
-    elevation: 6,
+    marginTop: 10,
   },
-
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 15,
+  backText: {
+    textAlign: "center",
+    color: "#2D9CDB",
+    fontWeight: "600",
   },
 });

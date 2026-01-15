@@ -42,7 +42,14 @@ export default function NoteDetailScreen({ note, onBack, onLogout }: Props) {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Note Details</Text>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require("../assets/Logo_Only.png")} 
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.headerTitle}>UniNotes</Text>
+        </View>
 
         {onLogout && (
           <TouchableOpacity onPress={() => setShowLogout(!showLogout)}>
@@ -95,18 +102,30 @@ export default function NoteDetailScreen({ note, onBack, onLogout }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#EAF4FF", padding: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: "#EAF4FF",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingTop: 20,
+  },
 
   /* Header */
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    maxWidth: 420,
-    width: "100%",
-    alignSelf: "center",
+    width: 400, 
     marginBottom: 20,
-    marginTop: 10,
+  },
+  logoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  logo: {
+    width: 40,
+    height: 40,
+    marginRight: 10,
   },
   headerTitle: {
     fontSize: 24,
@@ -140,8 +159,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 16,
     padding: 20,
-    width: "100%",
-    maxWidth: 420,
+    width: 400, 
     alignSelf: "center",
     shadowColor: "#000",
     shadowOpacity: 0.08,
@@ -173,7 +191,7 @@ const styles = StyleSheet.create({
   buttonsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    maxWidth: 250,
+    width: 220, 
   },
   ratingButton: {
     backgroundColor: "#2D9CDB",
@@ -191,6 +209,7 @@ const styles = StyleSheet.create({
 
   backButton: {
     marginTop: 10,
+    width: 400, 
   },
   backText: {
     textAlign: "center",

@@ -95,19 +95,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#EAF4FF",
-    padding: 20,
+    alignItems: "center",
+    paddingTop: 20,
   },
 
   /* Header */
   header: {
+    width: 400, // fixed width
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    maxWidth: 420,
-    width: "100%",
-    alignSelf: "center",
     marginBottom: 20,
-    marginTop: 10,
   },
   headerTitle: {
     fontSize: 24,
@@ -141,8 +139,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 20,
-    width: "100%",
-    maxWidth: 420,
+    width: 400, // fixed width
     alignSelf: "center",
     shadowColor: "#000",
     shadowOpacity: 0.08,
@@ -167,6 +164,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderWidth: 1,
     borderColor: "#D6E6F5",
+    width: 360, // fixed width for inputs
+    alignSelf: "center",
   },
   textArea: {
     height: 120,
@@ -179,9 +178,13 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     marginTop: 10,
+    width: 360, // fixed width
+    alignSelf: "center",
   },
   backButton: {
     marginTop: 14,
+    width: 360,
+    alignSelf: "center",
   },
   buttonText: {
     color: "#fff",

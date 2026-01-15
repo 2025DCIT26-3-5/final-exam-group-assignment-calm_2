@@ -8,6 +8,7 @@ import {
   Image,
   SafeAreaView,
   TextInput,
+  Dimensions,
 } from "react-native";
 import { useNotes, Note } from "../contexts/NotesContext";
 
@@ -26,13 +27,14 @@ export default function NotesListScreen({
   const [showLogout, setShowLogout] = useState(false);
   const [search, setSearch] = useState("");
 
-  // Calculate average rating
   const getAvg = (ratings: number[]) =>
     ratings.length ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
 
   const filteredNotes = [...notes]
     .filter((note) => note.title.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => getAvg(b.ratings) - getAvg(a.ratings));
+
+  const screenWidth = Dimensions.get("window").width;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -68,43 +70,42 @@ export default function NotesListScreen({
         />
       </View>
 
-      {/* Notes List */}
+      {/* Notes List - full width for scrollbar */}
       <FlatList
         data={filteredNotes}
         keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={true} // scrollbar on the far right
         contentContainerStyle={styles.listContent}
+        style={{ width: screenWidth }} // full width for scroll bar
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.noteCard}
-            onPress={() => onOpenNote(item)}
-          >
-            {/* Title */}
-            <Text
-              style={styles.noteTitle}
-              numberOfLines={2}
-              ellipsizeMode="tail"
+          <View style={styles.noteCardWrapper}>
+            <TouchableOpacity
+              style={styles.noteCard}
+              onPress={() => onOpenNote(item)}
             >
-              {item.title}
-            </Text>
-
-            {/* Content */}
-            <Text
-              style={styles.noteContent}
-              numberOfLines={3}
-              ellipsizeMode="tail"
-            >
-              {item.content}
-            </Text>
-
-            {/* Rating badge */}
-            <View style={styles.cardFooter}>
-              <View style={styles.ratingBadge}>
-                <Text style={styles.ratingText}>
-                  ⭐ {getAvg(item.ratings).toFixed(1)}
-                </Text>
+              <Text
+                style={styles.noteTitle}
+                numberOfLines={2}
+                ellipsizeMode="tail"
+              >
+                {item.title}
+              </Text>
+              <Text
+                style={styles.noteContent}
+                numberOfLines={3}
+                ellipsizeMode="tail"
+              >
+                {item.content}
+              </Text>
+              <View style={styles.cardFooter}>
+                <View style={styles.ratingBadge}>
+                  <Text style={styles.ratingText}>
+                    ⭐ {getAvg(item.ratings).toFixed(1)}
+                  </Text>
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
         )}
       />
 
@@ -120,14 +121,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#EAF4FF",
-    alignItems: "center",
   },
+
+  /* Header */
   header: {
     width: "100%",
     maxWidth: 420,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignSelf: "center",
     paddingVertical: 20,
     paddingHorizontal: 10,
   },
@@ -142,6 +144,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
   },
+
+  /* Logout */
   logoutButton: {
     backgroundColor: "#E74C3C",
     paddingVertical: 10,
@@ -156,9 +160,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
+
+  /* Search Bar */
   searchContainer: {
-    width: "90%",
+    width: "100%",
     maxWidth: 420,
+    alignSelf: "center",
     marginBottom: 10,
   },
   searchInput: {
@@ -169,17 +176,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#D6E6F5",
   },
+
+  /* Notes List */
   listContent: {
-    paddingBottom: 120,
     alignItems: "center",
+    paddingBottom: 120,
+  },
+  noteCardWrapper: {
+    alignItems: "center", // center the fixed-width card inside full-width list
   },
   noteCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 16,
-    width: "100%",
-    maxWidth: 420,
-    minWidth: 300,
+    width: 400, // fixed width card
     height: 140,
     marginVertical: 10,
     justifyContent: "space-between",
@@ -215,6 +225,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "700",
   },
+
+  /* Floating Upload Button */
   fab: {
     position: "absolute",
     bottom: 30,

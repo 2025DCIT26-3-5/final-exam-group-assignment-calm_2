@@ -113,7 +113,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#EAF4FF",
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
   },
 
   logo: {
@@ -124,8 +123,7 @@ const styles = StyleSheet.create({
 
   card: {
     backgroundColor: "#fff",
-    width: "100%",
-    maxWidth: 420,
+    width: 400, // fixed width
     borderRadius: 16,
     padding: 20,
     shadowColor: "#000",
@@ -133,7 +131,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 10,
     elevation: 5,
-    marginTop: -20,
+    alignSelf: "center",
   },
 
   title: {
@@ -174,15 +172,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#28a745",
     padding: 15,
     borderRadius: 8,
-    width: "90%",
+    width: 360, // fixed width
     marginBottom: 7,
+    alignSelf: "center",
   },
 
   loginButton: {
     backgroundColor: "#007BFF",
     padding: 15,
     borderRadius: 8,
-    width: "90%",
+    width: 360, // fixed width
+    alignSelf: "center",
   },
 
   buttonText: {

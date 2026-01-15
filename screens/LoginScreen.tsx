@@ -20,7 +20,7 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
   const [submitted, setSubmitted] = useState(false);
 
   // Validation
-  const emailValid = email.includes("@");
+  const emailValid = email.includes("@cvsu.edu.ph");
   const passwordValid = password.length >= 8;
   const formValid = emailValid && passwordValid;
 
@@ -56,10 +56,6 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
             keyboardType="email-address"
             placeholderTextColor="#8A8A8A"
           />
-
-          {submitted && !emailValid && (
-            <Text style={styles.errorText}>Email must contain @ symbol</Text>
-          )}
         </View>
 
         {/* Password */}
@@ -73,12 +69,6 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
             secureTextEntry
             placeholderTextColor="#8A8A8A"
           />
-
-          {submitted && !passwordValid && (
-            <Text style={styles.errorText}>
-              Password must be at least 8 characters
-            </Text>
-          )}
         </View>
       </View>
 
@@ -114,20 +104,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#EAF4FF",
     alignItems: "center",
-    paddingHorizontal: 20,
+    justifyContent: "center", 
   },
 
   logo: {
     width: 300,
     height: 300,
-    marginTop: -60,
+    marginBottom: 20,
   },
 
   title: {
     fontSize: 28,
     fontWeight: "bold",
     color: "#1A1A1A",
-    marginTop: -20,
+    marginBottom: 4,
   },
 
   subtitle: {
@@ -140,8 +130,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 18,
     padding: 24,
-    width: "90%",
-    maxWidth: 420,
+    width: 400, 
+    height: 300, 
     marginBottom: 20,
     shadowColor: "#000",
     shadowOpacity: 0.08,
@@ -180,8 +170,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2D9CDB",
     paddingVertical: 16,
     borderRadius: 14,
-    width: "90%",
-    maxWidth: 420,
+    width: 400, 
     marginBottom: 12,
     alignItems: "center",
     shadowColor: "#2D9CDB",
@@ -218,3 +207,4 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
 });
+

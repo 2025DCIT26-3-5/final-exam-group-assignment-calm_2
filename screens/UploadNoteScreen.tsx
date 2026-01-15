@@ -5,10 +5,10 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Image,
   SafeAreaView,
+  Image,
 } from "react-native";
-import { useNotes, Note } from "../contexts/NotesContext";
+import { useNotes } from "../contexts/NotesContext";
 
 type Props = {
   onBack: () => void;
@@ -21,11 +21,18 @@ export default function UploadNoteScreen({ onBack, onLogout }: Props) {
   const [content, setContent] = useState("");
   const [showLogout, setShowLogout] = useState(false);
 
-  const saveNote = () => {
-    if (!title || !content) return;
-    addNote({ title, content, rating: 0 }); // Add note to context
+  const saveNote = async () => {
+  if (!title || !content) return;
+  try {
+    // Only pass title & content
+    await addNote({ title, content });
     onBack();
-  };
+  } catch (err) {
+    console.error("Failed to save note:", err);
+    alert("Failed to save note");
+  }
+};
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -45,7 +52,6 @@ export default function UploadNoteScreen({ onBack, onLogout }: Props) {
         )}
       </View>
 
-      {/* Logout */}
       {showLogout && onLogout && (
         <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
           <Text style={styles.logoutText}>Logout</Text>
@@ -76,7 +82,10 @@ export default function UploadNoteScreen({ onBack, onLogout }: Props) {
         </View>
 
         <TouchableOpacity
-          style={[styles.saveButton, (!title || !content) && { opacity: 0.5 }]}
+          style={[
+            styles.saveButton,
+            (!title || !content) && { opacity: 0.5 },
+          ]}
           onPress={saveNote}
           disabled={!title || !content}
         >
@@ -92,106 +101,19 @@ export default function UploadNoteScreen({ onBack, onLogout }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#EAF4FF",
-    padding: 20,
-  },
-
-  /* Header */
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    maxWidth: 420,
-    width: "100%",
-    alignSelf: "center",
-    marginBottom: 20,
-    marginTop: 10,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#1A1A1A",
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-
-  /* Logout */
-  logoutButton: {
-    position: "absolute",
-    top: 80,
-    right: 30,
-    backgroundColor: "#E74C3C",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    zIndex: 10,
-  },
-  logoutText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-
-  /* Card */
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 20,
-    width: "100%",
-    maxWidth: 420,
-    alignSelf: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 10,
-    elevation: 5,
-  },
-
-  inputGroup: {
-    marginBottom: 14,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#555",
-    marginBottom: 6,
-  },
-  input: {
-    backgroundColor: "#F9FBFD",
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: "#D6E6F5",
-  },
-  textArea: {
-    height: 120,
-    textAlignVertical: "top",
-  },
-
-  /* Buttons */
-  saveButton: {
-    backgroundColor: "#2D9CDB",
-    paddingVertical: 14,
-    borderRadius: 12,
-    marginTop: 10,
-  },
-  backButton: {
-    marginTop: 14,
-  },
-  buttonText: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  backText: {
-    textAlign: "center",
-    color: "#2D9CDB",
-    fontWeight: "600",
-  },
+  container: { flex: 1, backgroundColor: "#EAF4FF", padding: 20 },
+  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
+  headerTitle: { fontSize: 24, fontWeight: "bold" },
+  avatar: { width: 40, height: 40, borderRadius: 20 },
+  logoutButton: { position: "absolute", top: 80, right: 30, backgroundColor: "#E74C3C", padding: 10, borderRadius: 10 },
+  logoutText: { color: "#fff", fontWeight: "bold" },
+  card: { backgroundColor: "#fff", borderRadius: 16, padding: 20, shadowColor: "#000", shadowOpacity: 0.08, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 5 },
+  inputGroup: { marginBottom: 14 },
+  label: { fontSize: 13, fontWeight: "600", color: "#555", marginBottom: 6 },
+  input: { backgroundColor: "#F9FBFD", borderRadius: 10, paddingVertical: 12, paddingHorizontal: 14, borderWidth: 1, borderColor: "#D6E6F5" },
+  textArea: { height: 120, textAlignVertical: "top" },
+  saveButton: { backgroundColor: "#2D9CDB", paddingVertical: 14, borderRadius: 12, marginTop: 10 },
+  backButton: { marginTop: 14 },
+  buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold", fontSize: 16 },
+  backText: { textAlign: "center", color: "#2D9CDB", fontWeight: "600" },
 });

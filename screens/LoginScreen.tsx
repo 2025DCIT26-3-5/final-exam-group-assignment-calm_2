@@ -8,26 +8,51 @@ import {
   Image,
   Pressable,
 } from "react-native";
+import { useAuth } from "../contexts/AuthContext"; // use AuthContext
 
-type Props = {
+type LoginScreenProps = {
   onLogin: () => void;
   onRegister: () => void;
 };
 
-export default function LoginScreen({ onLogin, onRegister }: Props) {
+export default function LoginScreen({ onLogin, onRegister }: LoginScreenProps) {
+  const { login } = useAuth(); // get login function from AuthContext
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Validation
-  const emailValid = email.includes("@");
+  const emailValid = email.includes("@cvsu.edu.ph");
   const passwordValid = password.length >= 8;
   const formValid = emailValid && passwordValid;
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setSubmitted(true);
+    setErrorMessage("");
+
     if (!formValid) return;
-    onLogin();
+
+    try {
+      // Call backend login API
+      const res = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.message || "Login failed");
+      }
+
+      const data = await res.json(); // Expect { userId: string }
+      login(data.userId); // Save userId in AuthContext
+      onLogin(); // Navigate to NotesListScreen
+    } catch (err: any) {
+      console.error("Login error:", err);
+      setErrorMessage(err.message || "Login failed");
+    }
   };
 
   return (
@@ -56,9 +81,8 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
             keyboardType="email-address"
             placeholderTextColor="#8A8A8A"
           />
-
           {submitted && !emailValid && (
-            <Text style={styles.errorText}>Email must contain @ symbol</Text>
+            <Text style={styles.errorText}>Email must contain @cvsu.edu.ph</Text>
           )}
         </View>
 
@@ -73,13 +97,15 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
             secureTextEntry
             placeholderTextColor="#8A8A8A"
           />
-
           {submitted && !passwordValid && (
             <Text style={styles.errorText}>
               Password must be at least 8 characters
             </Text>
           )}
         </View>
+
+        {/* Backend error */}
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
       </View>
 
       {/* Login Button */}
@@ -116,26 +142,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
   },
-
   logo: {
     width: 300,
     height: 300,
     marginTop: -60,
   },
-
   title: {
     fontSize: 28,
     fontWeight: "bold",
     color: "#1A1A1A",
     marginTop: -20,
   },
-
   subtitle: {
     fontSize: 16,
     color: "#555",
     marginBottom: 20,
   },
-
   inputCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 18,
@@ -149,17 +171,8 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-
-  inputGroup: {
-    marginBottom: 16,
-  },
-
-  inputLabel: {
-    fontWeight: "600",
-    marginBottom: 6,
-    color: "#444",
-  },
-
+  inputGroup: { marginBottom: 16 },
+  inputLabel: { fontWeight: "600", marginBottom: 6, color: "#444" },
   input: {
     backgroundColor: "#F3F8FE",
     borderRadius: 10,
@@ -168,14 +181,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#D6E6F5",
   },
-
   errorText: {
     marginTop: 6,
     fontSize: 12,
     color: "#E74C3C",
     fontWeight: "600",
   },
-
   loginButton: {
     backgroundColor: "#2D9CDB",
     paddingVertical: 16,
@@ -190,31 +201,9 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 6,
   },
-
-  loginButtonActive: {
-    backgroundColor: "#1B7FC1",
-    transform: [{ scale: 0.98 }],
-  },
-
-  loginButtonDisabled: {
-    backgroundColor: "#9CCAF0",
-    shadowOpacity: 0,
-  },
-
-  loginText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-
-  registerText: {
-    color: "#2D9CDB",
-    fontWeight: "600",
-    fontSize: 14,
-  },
-
-  registerTextActive: {
-    color: "#1B7FC1",
-    textDecorationLine: "underline",
-  },
+  loginButtonActive: { backgroundColor: "#1B7FC1", transform: [{ scale: 0.98 }] },
+  loginButtonDisabled: { backgroundColor: "#9CCAF0", shadowOpacity: 0 },
+  loginText: { color: "#FFFFFF", fontWeight: "bold", fontSize: 16 },
+  registerText: { color: "#2D9CDB", fontWeight: "600", fontSize: 14 },
+  registerTextActive: { color: "#1B7FC1", textDecorationLine: "underline" },
 });

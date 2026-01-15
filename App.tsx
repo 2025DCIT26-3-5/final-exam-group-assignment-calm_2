@@ -7,13 +7,11 @@ import NotesListScreen from "./screens/NotesListScreen";
 import UploadNoteScreen from "./screens/UploadNoteScreen";
 import NoteDetailScreen from "./screens/NoteDetailScreen";
 import { NotesProvider } from "./contexts/NotesContext";
+import { AuthProvider } from "./contexts/AuthContext"; // ✅ Correct import
 
 // Simple screen switching logic without navigation
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<{
-    name: string;
-    params?: any;
-  }>({ name: "Login" });
+  const [currentScreen, setCurrentScreen] = useState<{ name: string; params?: any }>({ name: "Login" });
 
   const openScreen = (name: string, params?: any) => {
     setCurrentScreen({ name, params });
@@ -26,12 +24,7 @@ export default function App() {
   const renderScreen = () => {
     switch (currentScreen.name) {
       case "Login":
-        return (
-          <LoginScreen
-            onLogin={() => openScreen("NotesList")}
-            onRegister={() => openScreen("Register")}
-          />
-        );
+        return <LoginScreen onLogin={() => openScreen("NotesList")} onRegister={() => openScreen("Register")} />;
       case "Register":
         return <RegisterScreen onBack={() => openScreen("Login")} />;
       case "NotesList":
@@ -43,27 +36,23 @@ export default function App() {
           />
         );
       case "UploadNote":
-        return <UploadNoteScreen onBack={() => openScreen("NotesList")} />;
+        return <UploadNoteScreen onBack={() => openScreen("NotesList")} onLogout={logout} />;
       case "NoteDetail":
-        return (
-          <NoteDetailScreen
-            note={currentScreen.params?.note}
-            onBack={() => openScreen("NotesList")}
-            onLogout={logout}
-          />
-        );
+        return <NoteDetailScreen note={currentScreen.params?.note} onBack={() => openScreen("NotesList")} onLogout={logout} />;
       default:
-        return <LoginScreen onLogin={() => openScreen("NotesList")} />;
+        return <LoginScreen onLogin={() => openScreen("NotesList")} onRegister={() => openScreen("Register")} />;
     }
   };
 
   return (
-    <NotesProvider>
-      <View style={styles.container}>
-        <StatusBar style="light" />
-        {renderScreen()}
-      </View>
-    </NotesProvider>
+    <AuthProvider>
+      <NotesProvider>
+        <View style={styles.container}>
+          <StatusBar style="light" />
+          {renderScreen()}
+        </View>
+      </NotesProvider>
+    </AuthProvider>
   );
 }
 

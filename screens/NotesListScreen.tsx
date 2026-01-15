@@ -71,7 +71,7 @@ export default function NotesListScreen({
       {/* Notes List */}
       <FlatList
         data={filteredNotes}
-        keyExtractor={(item) => item.id.toString()}
+       keyExtractor={(item) => item._id} // use MongoDB _id
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
           <TouchableOpacity

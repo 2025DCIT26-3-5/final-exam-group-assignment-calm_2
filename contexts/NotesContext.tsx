@@ -1,54 +1,95 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
-// Keep ratings as an array
+// Note type
 export type Note = {
   id: number;
   title: string;
   content: string;
   rating: number;
   ratings: number[];
+  isFavorite?: boolean; // ⭐ ADD
 };
 
 type NotesContextType = {
   notes: Note[];
-  addNote: (note: Omit<Note, "id" | "ratings">) => void;
+  addNote: (note: Omit<Note, "id" | "ratings" | "isFavorite">) => void;
   addRating: (id: number, rating: number) => void;
-  updateNotes: (notes: Note[]) => void;
+  updateNote: (note: Note) => void;       // ✏️ ADD
+  deleteNote: (id: number) => void;       // 🗑️ ADD
+  toggleFavorite: (id: number) => void;   // ⭐ ADD
 };
 
 const NotesContext = createContext<NotesContextType | undefined>(undefined);
 
 export const useNotes = () => {
   const context = useContext(NotesContext);
-  if (!context) throw new Error("useNotes must be used within NotesProvider");
+  if (!context) {
+    throw new Error("useNotes must be used within NotesProvider");
+  }
   return context;
 };
 
 export const NotesProvider = ({ children }: { children: ReactNode }) => {
   const [notes, setNotes] = useState<Note[]>([]);
 
-  // Add a new note
-  const addNote = (note: Omit<Note, "id" | "ratings">) => {
-    const newNote: Note = { ...note, id: Date.now(), ratings: [] };
-    setNotes((prev) => [...prev, newNote]);
+  // ➕ Add a new note
+  const addNote = (note: Omit<Note, "id" | "ratings" | "isFavorite">) => {
+    const newNote: Note = {
+      ...note,
+      id: Date.now(),
+      ratings: [],
+      isFavorite: false,
+    };
+    setNotes(prev => [...prev, newNote]);
   };
 
-  // Add rating to a note
-  const addRating = (id: number, rating: number) => {
-    setNotes((prev) =>
-      prev.map((note) =>
-        note.id === id ? { ...note, ratings: [...note.ratings, rating] } : note
+  // ⭐ Toggle favorite
+  const toggleFavorite = (id: number) => {
+    setNotes(prev =>
+      prev.map(note =>
+        note.id === id
+          ? { ...note, isFavorite: !note.isFavorite }
+          : note
       )
     );
   };
 
-  // Update notes array (bulk update)
-  const updateNotes = (updatedNotes: Note[]) => {
-    setNotes(updatedNotes);
+  // ⭐ Add rating
+  const addRating = (id: number, rating: number) => {
+    setNotes(prev =>
+      prev.map(note =>
+        note.id === id
+          ? { ...note, ratings: [...note.ratings, rating] }
+          : note
+      )
+    );
+  };
+
+  // ✏️ Update note
+  const updateNote = (updatedNote: Note) => {
+    setNotes(prev =>
+      prev.map(note =>
+        note.id === updatedNote.id ? updatedNote : note
+      )
+    );
+  };
+
+  // 🗑️ Delete note
+  const deleteNote = (id: number) => {
+    setNotes(prev => prev.filter(note => note.id !== id));
   };
 
   return (
-    <NotesContext.Provider value={{ notes, addNote, addRating, updateNotes }}>
+    <NotesContext.Provider
+      value={{
+        notes,
+        addNote,
+        addRating,
+        updateNote,
+        deleteNote,
+        toggleFavorite,
+      }}
+    >
       {children}
     </NotesContext.Provider>
   );

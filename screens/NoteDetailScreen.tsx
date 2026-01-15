@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
-  Image,
 } from "react-native";
 import { useNotes, Note } from "../contexts/NotesContext";
 
@@ -15,32 +14,32 @@ type Props = {
 };
 
 export default function NoteDetailScreen({ note, onBack }: Props) {
-  const { notes, updateNotes } = useNotes();
+  const { notes, updateNote } = useNotes();
 
-  const currentNote = notes.find((n) => n.id === note.id) || note;
+  // Always get the latest version from context
+  const currentNote = notes.find(n => n.id === note.id) || note;
 
   const averageRating =
-    currentNote.ratings && currentNote.ratings.length
+    currentNote.ratings.length > 0
       ? currentNote.ratings.reduce((a, b) => a + b, 0) /
         currentNote.ratings.length
       : 0;
 
   const addRating = (value: number) => {
-    const updatedNotes = notes.map((n) => {
-      if (n.id === currentNote.id) {
-        const updatedRatings = n.ratings ? [...n.ratings, value] : [value];
-        return { ...n, ratings: updatedRatings, rating: value };
-      }
-      return n;
-    });
-    updateNotes(updatedNotes);
+    const updatedNote: Note = {
+      ...currentNote,
+      ratings: [...currentNote.ratings, value],
+      rating: value,
+    };
+
+    updateNote(updatedNote);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-          <Text style={styles.headerTitle}>UniNotes</Text> 
+        <Text style={styles.headerTitle}>UniNotes</Text>
       </View>
 
       {/* Note Card */}
@@ -50,9 +49,12 @@ export default function NoteDetailScreen({ note, onBack }: Props) {
 
         {/* Rating */}
         <View style={styles.ratingContainer}>
-          <Text style={styles.avgText}>⭐ Average: {averageRating.toFixed(1)}</Text>
+          <Text style={styles.avgText}>
+            ⭐ Average: {averageRating.toFixed(1)}
+          </Text>
+
           <View style={styles.buttonsRow}>
-            {[1, 2, 3, 4, 5].map((r) => (
+            {[1, 2, 3, 4, 5].map(r => (
               <TouchableOpacity
                 key={r}
                 style={styles.ratingButton}
@@ -71,6 +73,7 @@ export default function NoteDetailScreen({ note, onBack }: Props) {
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

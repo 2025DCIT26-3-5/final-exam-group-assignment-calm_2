@@ -9,7 +9,9 @@ import {
   SafeAreaView,
   TextInput,
   Dimensions,
+  Alert,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useNotes, Note } from "../contexts/NotesContext";
 
 type Props = {
@@ -23,16 +25,38 @@ export default function NotesListScreen({
   onOpenNote,
   onLogout,
 }: Props) {
-  const { notes } = useNotes();
+  const { notes, deleteNote, toggleFavorite } = useNotes();
   const [showLogout, setShowLogout] = useState(false);
   const [search, setSearch] = useState("");
 
   const getAvg = (ratings: number[]) =>
     ratings.length ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
 
+  // ✅ FIXED: id is number
+  const confirmDelete = (id: number) => {
+    Alert.alert(
+      "Delete Note",
+      "Are you sure you want to delete this note?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete", style: "destructive", onPress: () => deleteNote(id) },
+      ]
+    );
+  };
+
   const filteredNotes = [...notes]
-    .filter((note) => note.title.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => getAvg(b.ratings) - getAvg(a.ratings));
+    .filter(note =>
+      note.title.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => {
+      const aFav = !!a.isFavorite;
+      const bFav = !!b.isFavorite;
+
+      if (aFav === bFav) {
+        return getAvg(b.ratings) - getAvg(a.ratings);
+      }
+      return aFav ? -1 : 1;
+    });
 
   const screenWidth = Dimensions.get("window").width;
 
@@ -40,8 +64,7 @@ export default function NotesListScreen({
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        
-          <Text style={styles.headerTitle}>UniNotes</Text>
+        <Text style={styles.headerTitle}>UniNotes</Text>
 
         <TouchableOpacity onPress={() => setShowLogout(!showLogout)}>
           <Image
@@ -60,7 +83,7 @@ export default function NotesListScreen({
         </TouchableOpacity>
       )}
 
-      {/* Search Bar */}
+      {/* Search */}
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
@@ -71,46 +94,64 @@ export default function NotesListScreen({
         />
       </View>
 
-      {/* Notes List */}
+      {/* Notes */}
       <FlatList
         data={filteredNotes}
         keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={true}
+        showsVerticalScrollIndicator
         contentContainerStyle={styles.listContent}
         style={{ width: screenWidth }}
         renderItem={({ item }) => (
           <View style={styles.noteCardWrapper}>
-            <TouchableOpacity
-              style={styles.noteCard}
-              onPress={() => onOpenNote(item)}
-            >
-              <Text
-                style={styles.noteTitle}
-                numberOfLines={2}
-                ellipsizeMode="tail"
-              >
-                {item.title}
-              </Text>
-              <Text
-                style={styles.noteContent}
-                numberOfLines={3}
-                ellipsizeMode="tail"
-              >
-                {item.content}
-              </Text>
-              <View style={styles.cardFooter}>
-                <View style={styles.ratingBadge}>
-                  <Text style={styles.ratingText}>
-                    ⭐ {getAvg(item.ratings).toFixed(1)}
-                  </Text>
-                </View>
+            <View style={styles.noteCard}>
+
+              {/* Actions */}
+              <View style={styles.cardActions}>
+                <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
+                  <Ionicons
+                    name={item.isFavorite ? "star" : "star-outline"}
+                    size={22}
+                    color={item.isFavorite ? "#F2C94C" : "#BDBDBD"}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => onOpenNote(item)}>
+                  <Ionicons name="pencil" size={20} color="#2D9CDB" />
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => confirmDelete(item.id)}>
+                  <Ionicons name="trash" size={20} color="#E74C3C" />
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
+
+              {/* Content */}
+              <TouchableOpacity
+                style={{ flex: 1 }}
+                onPress={() => onOpenNote(item)}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.noteTitle} numberOfLines={2}>
+                  {item.title}
+                </Text>
+
+                <Text style={styles.noteContent} numberOfLines={3}>
+                  {item.content}
+                </Text>
+
+                <View style={styles.cardFooter}>
+                  <View style={styles.ratingBadge}>
+                    <Text style={styles.ratingText}>
+                      ⭐ {getAvg(item.ratings).toFixed(1)}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       />
 
-      {/* Floating Upload Button */}
+      {/* FAB */}
       <TouchableOpacity style={styles.fab} onPress={onUpload}>
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
@@ -118,42 +159,36 @@ export default function NotesListScreen({
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#EAF4FF",
   },
 
-  /* Header */
   header: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignSelf: "center",
     paddingVertical: 20,
     paddingHorizontal: 20,
-    minWidth: 420,
     borderBottomColor: "#D6E6F5",
     borderBottomWidth: 1,
     marginBottom: 10,
   },
-  logoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
+
   headerTitle: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#1A1A1A",
-    marginTop: 0,
   },
+
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
   },
 
-  /* Logout */
   logoutButton: {
     backgroundColor: "#E74C3C",
     paddingVertical: 10,
@@ -164,19 +199,19 @@ const styles = StyleSheet.create({
     right: 20,
     zIndex: 10,
   },
+
   logoutText: {
     color: "#fff",
     fontWeight: "bold",
   },
 
-  /* Search Bar */
   searchContainer: {
     width: "100%",
-    minWidth: 420,
     maxWidth: 800,
     alignSelf: "center",
     marginBottom: 10,
   },
+
   searchInput: {
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
@@ -186,14 +221,15 @@ const styles = StyleSheet.create({
     borderColor: "#D6E6F5",
   },
 
-  /* Notes List */
   listContent: {
     alignItems: "center",
     paddingBottom: 120,
   },
+
   noteCardWrapper: {
     alignItems: "center",
   },
+
   noteCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
@@ -208,34 +244,45 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
+
+  cardActions: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    flexDirection: "row",
+    gap: 14,
+    zIndex: 2,
+  },
+
   noteTitle: {
     fontSize: 16,
     fontWeight: "700",
     color: "#1A1A1A",
   },
+
   noteContent: {
     fontSize: 14,
     color: "#555",
     marginTop: 4,
   },
+
   cardFooter: {
     alignItems: "flex-end",
   },
+
   ratingBadge: {
     backgroundColor: "#2D9CDB",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 20,
-    minWidth: 44,
-    alignItems: "center",
   },
+
   ratingText: {
     color: "#FFFFFF",
     fontSize: 13,
     fontWeight: "700",
   },
 
-  /* Floating Upload Button */
   fab: {
     position: "absolute",
     bottom: 30,
@@ -246,12 +293,9 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#2D9CDB",
-    shadowOpacity: 0.35,
-    shadowOffset: { width: 0, height: 6 },
-    shadowRadius: 10,
     elevation: 8,
   },
+
   fabText: {
     fontSize: 30,
     color: "#fff",

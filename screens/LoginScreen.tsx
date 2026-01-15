@@ -8,6 +8,7 @@ import {
   Image,
   Pressable,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 type Props = {
   onLogin: () => void;
@@ -17,9 +18,9 @@ type Props = {
 export default function LoginScreen({ onLogin, onRegister }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  // Validation
   const emailValid = email.includes("@cvsu.edu.ph");
   const passwordValid = password.length >= 8;
   const formValid = emailValid && passwordValid;
@@ -32,7 +33,6 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Logo */}
       <Image
         source={require("../assets/Logo_Name.png")}
         style={styles.logo}
@@ -42,7 +42,6 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
       <Text style={styles.title}>Welcome to UniNotes</Text>
       <Text style={styles.subtitle}>Login to continue</Text>
 
-      {/* Input Card */}
       <View style={styles.inputCard}>
         {/* Email */}
         <View style={styles.inputGroup}>
@@ -56,41 +55,66 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
             keyboardType="email-address"
             placeholderTextColor="#8A8A8A"
           />
+
+          {submitted && !email && (
+            <Text style={styles.errorText}>Email is required</Text>
+          )}
+
+          {submitted && email && !emailValid && (
+            <Text style={styles.errorText}>Use your @cvsu.edu.ph email</Text>
+          )}
         </View>
 
         {/* Password */}
         <View style={styles.inputGroup}>
           <Text style={styles.inputLabel}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            placeholderTextColor="#8A8A8A"
-          />
+
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+              placeholderTextColor="#8A8A8A"
+            />
+
+            <Pressable onPress={() => setShowPassword(!showPassword)}>
+              <Ionicons
+                name={showPassword ? "eye-off" : "eye"}
+                size={20}
+                color="#444"
+              />
+            </Pressable>
+          </View>
+
+          {submitted && !password && (
+            <Text style={styles.errorText}>Password is required</Text>
+          )}
+
+          {submitted && password && password.length < 8 && (
+            <Text style={styles.errorText}>
+              Password must be at least 8 characters
+            </Text>
+          )}
         </View>
       </View>
 
       {/* Login Button */}
       <Pressable
         onPress={handleLogin}
-        disabled={!formValid}
         style={({ pressed }) => [
           styles.loginButton,
-          (!formValid || pressed) && styles.loginButtonActive,
+          pressed && styles.loginButtonActive,
           !formValid && styles.loginButtonDisabled,
         ]}
       >
         <Text style={styles.loginText}>Login</Text>
       </Pressable>
 
-      {/* Register Text */}
       <Pressable onPress={onRegister}>
         {({ pressed }) => (
-          <Text
-            style={[styles.registerText, pressed && styles.registerTextActive]}
-          >
+          <Text style={[styles.registerText, pressed && styles.registerTextActive]}>
             Don’t have an account? Register
           </Text>
         )}
@@ -104,52 +128,46 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#EAF4FF",
     alignItems: "center",
-    justifyContent: "center", 
+    justifyContent: "center",
+    paddingHorizontal: 20,
   },
-
   logo: {
-    width: 300,
-    height: 300,
+    width: "80%",
+    aspectRatio: 1,
     marginBottom: 20,
   },
-
   title: {
     fontSize: 28,
     fontWeight: "bold",
     color: "#1A1A1A",
     marginBottom: 4,
+    textAlign: "center",
   },
-
   subtitle: {
     fontSize: 16,
     color: "#555",
     marginBottom: 20,
+    textAlign: "center",
   },
-
   inputCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 18,
     padding: 24,
-    width: 400, 
-    height: 300, 
+    width: "90%",
+    maxWidth: 400,
     marginBottom: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 10,
     elevation: 5,
+    alignItems: "flex-start",
   },
-
   inputGroup: {
+    width: "100%",
     marginBottom: 16,
   },
-
   inputLabel: {
     fontWeight: "600",
     marginBottom: 6,
     color: "#444",
   },
-
   input: {
     backgroundColor: "#F3F8FE",
     borderRadius: 10,
@@ -157,54 +175,56 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderWidth: 1,
     borderColor: "#D6E6F5",
+    width: "100%",
   },
-
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F3F8FE",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#D6E6F5",
+    paddingHorizontal: 12,
+  },
+  passwordInput: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingRight: 8,
+  },
   errorText: {
     marginTop: 6,
-    fontSize: 12,
-    color: "#E74C3C",
-    fontWeight: "600",
+    color: "#D32F2F",
+    fontSize: 13,
   },
-
   loginButton: {
     backgroundColor: "#2D9CDB",
     paddingVertical: 16,
     borderRadius: 14,
-    width: 400, 
+    width: "90%",
+    maxWidth: 400,
     marginBottom: 12,
     alignItems: "center",
-    shadowColor: "#2D9CDB",
-    shadowOpacity: 0.35,
-    shadowOffset: { width: 0, height: 6 },
-    shadowRadius: 10,
-    elevation: 6,
   },
-
   loginButtonActive: {
     backgroundColor: "#1B7FC1",
     transform: [{ scale: 0.98 }],
   },
-
   loginButtonDisabled: {
     backgroundColor: "#9CCAF0",
-    shadowOpacity: 0,
   },
-
   loginText: {
     color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 16,
   },
-
   registerText: {
     color: "#2D9CDB",
     fontWeight: "600",
     fontSize: 14,
+    textAlign: "center",
   },
-
   registerTextActive: {
     color: "#1B7FC1",
     textDecorationLine: "underline",
   },
 });
-

@@ -5,8 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
-  ScrollView, // for scrolling
+  ScrollView,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons"; // Import Ionicons
 import { useNotes, Note } from "../contexts/NotesContext";
 
 type Props = {
@@ -40,14 +41,17 @@ export default function NoteDetailScreen({ note, onBack }: Props) {
       {/* Header - fixed */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>UniNotes</Text>
+        <TouchableOpacity onPress={onBack} style={styles.backIcon}>
+          <Ionicons name="arrow-back" size={28} color="#2D9CDB" />
+        </TouchableOpacity>
       </View>
 
       {/* Scrollable content */}
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={true} // show scrollbar on the side
-        indicatorStyle="black" // iOS: make scrollbar dark
+        showsVerticalScrollIndicator={true}
+        indicatorStyle="black"
       >
         <View style={styles.card}>
           <Text style={styles.noteTitle}>{currentNote.title}</Text>
@@ -71,10 +75,6 @@ export default function NoteDetailScreen({ note, onBack }: Props) {
               ))}
             </View>
           </View>
-
-          <TouchableOpacity style={styles.backButton} onPress={onBack}>
-            <Text style={styles.backText}>Back</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     alignItems: "center",
-    paddingBottom: 40, // extra spacing so last item isn't cut off
+    paddingBottom: 40,
   },
 
   /* Header */
@@ -114,6 +114,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "#1A1A1A",
+  },
+  backIcon: {
+    // icon is positioned automatically by flex-end
   },
 
   /* Card */
@@ -167,14 +170,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "700",
     fontSize: 16,
-  },
-  backButton: {
-    marginTop: 10,
-    width: 400,
-  },
-  backText: {
-    textAlign: "center",
-    color: "#2D9CDB",
-    fontWeight: "600",
   },
 });

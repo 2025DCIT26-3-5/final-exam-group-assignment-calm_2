@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  ScrollView, // for scrolling
 } from "react-native";
 import { useNotes, Note } from "../contexts/NotesContext";
 
@@ -31,56 +32,69 @@ export default function NoteDetailScreen({ note, onBack }: Props) {
       ratings: [...currentNote.ratings, value],
       rating: value,
     };
-
     updateNote(updatedNote);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
+      {/* Header - fixed */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>UniNotes</Text>
       </View>
 
-      {/* Note Card */}
-      <View style={styles.card}>
-        <Text style={styles.noteTitle}>{currentNote.title}</Text>
-        <Text style={styles.noteContent}>{currentNote.content}</Text>
+      {/* Scrollable content */}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={true} // show scrollbar on the side
+        indicatorStyle="black" // iOS: make scrollbar dark
+      >
+        <View style={styles.card}>
+          <Text style={styles.noteTitle}>{currentNote.title}</Text>
+          <Text style={styles.noteContent}>{currentNote.content}</Text>
 
-        {/* Rating */}
-        <View style={styles.ratingContainer}>
-          <Text style={styles.avgText}>
-            ⭐ Average: {averageRating.toFixed(1)}
-          </Text>
+          {/* Rating */}
+          <View style={styles.ratingContainer}>
+            <Text style={styles.avgText}>
+              ⭐ Average: {averageRating.toFixed(1)}
+            </Text>
 
-          <View style={styles.buttonsRow}>
-            {[1, 2, 3, 4, 5].map(r => (
-              <TouchableOpacity
-                key={r}
-                style={styles.ratingButton}
-                onPress={() => addRating(r)}
-              >
-                <Text style={styles.ratingText}>{r}</Text>
-              </TouchableOpacity>
-            ))}
+            <View style={styles.buttonsRow}>
+              {[1, 2, 3, 4, 5].map(r => (
+                <TouchableOpacity
+                  key={r}
+                  style={styles.ratingButton}
+                  onPress={() => addRating(r)}
+                >
+                  <Text style={styles.ratingText}>{r}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
 
-        <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <Text style={styles.backText}>Back</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.backButton} onPress={onBack}>
+            <Text style={styles.backText}>Back</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#EAF4FF",
-    alignItems: "center",
     paddingTop: 0,
+  },
+
+  /* ScrollView */
+  scrollView: {
+    width: "100%",
+  },
+  scrollContent: {
+    alignItems: "center",
+    paddingBottom: 40, // extra spacing so last item isn't cut off
   },
 
   /* Header */
@@ -95,10 +109,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#D6E6F5",
     borderBottomWidth: 1,
     marginBottom: 10,
-  },
-  logoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
   },
   headerTitle: {
     fontSize: 24,
@@ -118,6 +128,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 10,
     elevation: 5,
+    marginBottom: 20,
   },
   noteTitle: {
     fontSize: 18,

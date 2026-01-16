@@ -1,63 +1,108 @@
-import { useState } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
+import { View, StyleSheet } from "react-native";
 
-// Child Component with Props
-function Greeting({ name }) {
-  return <Text style={styles.greeting}>Kamote, {name}!</Text>;
-}
+import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+import NotesListScreen from "./screens/NotesListScreen";
+import UploadNoteScreen from "./screens/UploadNoteScreen";
+import NoteDetailScreen from "./screens/NoteDetailScreen";
+import ProfileScreen from "./screens/ProfileScreen";
+import SettingScreen from "./screens/SettingScreen";
+import { NotesProvider } from "./contexts/NotesContext";
 
 export default function App() {
-  // State Hook
-  const [count, setCount] = useState(0);
-  const [name, setName] = useState("World");
+  const [currentScreen, setCurrentScreen] = useState<{
+    name: string;
+    params?: any;
+  }>({ name: "Login" });
+
+  // ✅ Track the logged-in user's email
+  const [loggedInUserEmail, setLoggedInUserEmail] = useState<string>("");
+
+  const openScreen = (name: string, params?: any) => {
+    setCurrentScreen({ name, params });
+  };
+
+  const logout = () => {
+    setLoggedInUserEmail(""); // clear email on logout
+    openScreen("Login");
+  };
+
+  const renderScreen = () => {
+    switch (currentScreen.name) {
+      case "Login":
+        return (
+          <LoginScreen
+            // Pass email from LoginScreen back to App
+            onLogin={(email: string) => {
+              setLoggedInUserEmail(email);
+              openScreen("NotesList");
+            }}
+            onRegister={() => openScreen("Register")}
+          />
+        );
+
+      case "Register":
+        return <RegisterScreen onBack={() => openScreen("Login")} />;
+
+      case "NotesList":
+        return (
+          <NotesListScreen
+            onUpload={() => openScreen("UploadNote")}
+            onOpenNote={(note: any) => openScreen("NoteDetail", { note })}
+            onLogout={logout}
+            onOpenProfile={() => openScreen("Profile")}
+            onOpenSettings={() => openScreen("Settings")}
+          />
+        );
+
+      case "UploadNote":
+        return <UploadNoteScreen onBack={() => openScreen("NotesList")} />;
+
+      case "NoteDetail":
+        return (
+          <NoteDetailScreen
+            note={currentScreen.params?.note}
+            onBack={() => openScreen("NotesList")}
+            onLogout={logout}
+          />
+        );
+
+      case "Profile":
+        return <ProfileScreen onBack={() => openScreen("NotesList")} />;
+
+      case "Settings":
+        return (
+          <SettingScreen
+            onBack={() => openScreen("NotesList")}
+            userEmail={loggedInUserEmail} // now dynamically shows the logged-in email
+          />
+        );
+
+      default:
+        return (
+          <LoginScreen
+            onLogin={(email: string) => {
+              setLoggedInUserEmail(email);
+              openScreen("NotesList");
+            }}
+            onRegister={() => openScreen("Register")}
+          />
+        );
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      {/* Native Feature: Controls phone's status bar */}
-      <StatusBar style="light" backgroundColor="red" />
-
-      <Text style={styles.title}>React Native Demo</Text>
-
-      {/* Component with Props */}
-      <Greeting name={name} />
-
-      {/* State Display */}
-      <Text style={styles.counter}>Count: {count}</Text>
-
-      {/* Native Button */}
-      <Button title="Increment" onPress={() => setCount(count + 1)} />
-
-      <Button
-        title="Change Name"
-        onPress={() => setName(name === "World" ? "Student" : "World")}
-      />
-    </View>
+    <NotesProvider>
+      <View style={styles.container}>
+        <StatusBar style="light" />
+        {renderScreen()}
+      </View>
+    </NotesProvider>
   );
 }
 
-// StyleSheet (like CSS but for React Native)
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#cbd4e6ff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
-    marginBottom: 20,
-  },
-  greeting: {
-    fontSize: 32,
-    color: "#ec261cff",
-    marginBottom: 10,
-  },
-  counter: {
-    fontSize: 16,
-    color: "white",
-    marginVertical: 20,
-  },
+  container: { flex: 1 },
 });

@@ -18,21 +18,24 @@ type Props = {
   onUpload: () => void;
   onOpenNote: (note: Note) => void;
   onLogout: () => void;
+  onOpenProfile: () => void;   // NEW
+  onOpenSettings: () => void;  // NEW
 };
 
 export default function NotesListScreen({
   onUpload,
   onOpenNote,
   onLogout,
+  onOpenProfile,
+  onOpenSettings,
 }: Props) {
   const { notes, deleteNote, toggleFavorite } = useNotes();
-  const [showLogout, setShowLogout] = useState(false);
+  const [showMenu, setShowMenu] = useState(false); // renamed from showLogout
   const [search, setSearch] = useState("");
 
   const getAvg = (ratings: number[]) =>
     ratings.length ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
 
-  // ✅ FIXED: id is number
   const confirmDelete = (id: number) => {
     Alert.alert(
       "Delete Note",
@@ -45,13 +48,10 @@ export default function NotesListScreen({
   };
 
   const filteredNotes = [...notes]
-    .filter(note =>
-      note.title.toLowerCase().includes(search.toLowerCase())
-    )
+    .filter(note => note.title.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
       const aFav = !!a.isFavorite;
       const bFav = !!b.isFavorite;
-
       if (aFav === bFav) {
         return getAvg(b.ratings) - getAvg(a.ratings);
       }
@@ -66,7 +66,7 @@ export default function NotesListScreen({
       <View style={styles.header}>
         <Text style={styles.headerTitle}>UniNotes</Text>
 
-        <TouchableOpacity onPress={() => setShowLogout(!showLogout)}>
+        <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
           <Image
             source={{
               uri: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
@@ -76,11 +76,21 @@ export default function NotesListScreen({
         </TouchableOpacity>
       </View>
 
-      {/* Logout */}
-      {showLogout && (
-        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
+      {/* Dropdown menu */}
+      {showMenu && (
+        <View style={styles.menuContainer}>
+          <TouchableOpacity style={styles.menuItem} onPress={onOpenProfile}>
+            <Text style={styles.menuText}>My Profile</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem} onPress={onOpenSettings}>
+            <Text style={styles.menuText}>Settings</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem} onPress={onLogout}>
+            <Text style={[styles.menuText, { color: "#E74C3C" }]}>Logout</Text>
+          </TouchableOpacity>
+        </View>
       )}
 
       {/* Search */}
@@ -104,7 +114,6 @@ export default function NotesListScreen({
         renderItem={({ item }) => (
           <View style={styles.noteCardWrapper}>
             <View style={styles.noteCard}>
-
               {/* Actions */}
               <View style={styles.cardActions}>
                 <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
@@ -159,7 +168,6 @@ export default function NotesListScreen({
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -189,20 +197,32 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
 
-  logoutButton: {
-    backgroundColor: "#E74C3C",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 10,
+  menuContainer: {
     position: "absolute",
     top: 75,
     right: 20,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 10,
+    elevation: 5,
     zIndex: 10,
+    overflow: "hidden",
   },
 
-  logoutText: {
-    color: "#fff",
-    fontWeight: "bold",
+  menuItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomColor: "#eee",
+    borderBottomWidth: 1,
+  },
+
+  menuText: {
+    fontSize: 16,
+    color: "#333",
+    fontWeight: "500",
   },
 
   searchContainer: {

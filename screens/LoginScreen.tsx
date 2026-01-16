@@ -11,7 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 type Props = {
-  onLogin: () => void;
+  onLogin: (email: string) => void;
   onRegister: () => void;
 };
 
@@ -28,7 +28,7 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
   const handleLogin = () => {
     setSubmitted(true);
     if (!formValid) return;
-    onLogin();
+    onLogin(email);
   };
 
   return (
@@ -128,13 +128,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#EAF4FF",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     paddingHorizontal: 20,
+    padding: 40,
   },
   logo: {
-    width: "80%",
+    width: "90%",
     aspectRatio: 1,
-    marginBottom: 20,
+    height: 200,
+    marginBottom: 12,
   },
   title: {
     fontSize: 28,
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 24,
     width: "90%",
-    maxWidth: 400,
+    maxWidth: 300,
     marginBottom: 20,
     elevation: 5,
     alignItems: "flex-start",

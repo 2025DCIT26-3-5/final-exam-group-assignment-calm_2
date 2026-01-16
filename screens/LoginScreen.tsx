@@ -61,7 +61,7 @@ export default function LoginScreen({ onLogin, onRegister }: Props) {
           )}
 
           {submitted && email && !emailValid && (
-            <Text style={styles.errorText}>Use your @cvsu.edu.ph email</Text>
+            <Text style={styles.errorText}>Use your cvsu account</Text>
           )}
         </View>
 

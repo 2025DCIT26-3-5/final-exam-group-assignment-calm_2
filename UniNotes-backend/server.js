@@ -1,6 +1,5 @@
 require("dotenv").config();
-console.log("MONGO_URI:", process.env.MONGO_URI);
-
+console.log("MONGO_URI =", process.env.MONGO_URI);
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -14,14 +13,15 @@ app.use(express.json());
 // routes
 const userRoutes = require("./routes/users");
 app.use("/api/users", userRoutes);
+const noteRoutes = require('./routes/notes');
+app.use('/api/notes', noteRoutes);
+
 
 // Connect to MongoDB
 mongoose
-  .connect(
-    "mongodb+srv://UniNotesUser:202301070@uninotes.5wsqju5.mongodb.net/?appName=UniNotes"
-  )
+  .connect('mongodb+srv://UniNotesUser:202301070@uninotes.5wsqju5.mongodb.net/UniNotes')
   .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
+  .catch(err => console.log("MongoDB connection error:", err));
 
 // Basic route
 app.get("/", (req, res) => {
